@@ -1,27 +1,73 @@
 """
 Conway's Game of Life implementation with musical integration support.
+Supports multiple rule sets for creating different types of patterns.
 """
 
 import numpy as np
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Dict, Set
+from enum import Enum
+
+
+class RuleSet(Enum):
+    """Available rule sets for cellular automata."""
+    CONWAY = "conway"           # B3/S23 - Classic Conway's Game of Life
+    HIGHLIFE = "highlife"       # B36/S23 - HighLife variant
+    DAY_NIGHT = "day_night"     # B3678/S34678 - Day & Night
+    MAZE = "maze"               # B3/S12345 - Maze generation
+    CORAL = "coral"             # B3/S45678 - Coral growth
+    SEEDS = "seeds"             # B2/S - Seeds pattern
+    DIAMOEBA = "diamoeba"       # B35678/S5678 - Diamoeba
+    LIFE_WITHOUT_DEATH = "life_without_death"  # B3/S012345678 - Life without Death
 
 
 class GameOfLife:
-    """Conway's Game of Life cellular automaton."""
+    """Cellular automaton with multiple rule sets for creating different patterns."""
     
-    def __init__(self, width: int = 50, height: int = 50):
+    def __init__(self, width: int = 50, height: int = 50, rule_set: RuleSet = RuleSet.CONWAY):
         """
         Initialize the Game of Life grid.
         
         Args:
             width: Grid width in cells
             height: Grid height in cells
+            rule_set: Rule set to use for cellular automaton
         """
         self.width = width
         self.height = height
         self.grid = np.zeros((height, width), dtype=bool)
         self.generation = 0
         self.population_history = []
+        self.rule_set = rule_set
+        self.birth_rules, self.survival_rules = self._parse_rules(rule_set)
+    
+    def _parse_rules(self, rule_set: RuleSet) -> Tuple[Set[int], Set[int]]:
+        """
+        Parse rule set into birth and survival conditions.
+        
+        Args:
+            rule_set: The rule set to parse
+            
+        Returns:
+            Tuple of (birth_conditions, survival_conditions)
+        """
+        rule_definitions = {
+            RuleSet.CONWAY: ("B3/S23", {3}, {2, 3}),
+            RuleSet.HIGHLIFE: ("B36/S23", {3, 6}, {2, 3}),
+            RuleSet.DAY_NIGHT: ("B3678/S34678", {3, 6, 7, 8}, {3, 4, 6, 7, 8}),
+            RuleSet.MAZE: ("B3/S12345", {3}, {1, 2, 3, 4, 5}),
+            RuleSet.CORAL: ("B3/S45678", {3}, {4, 5, 6, 7, 8}),
+            RuleSet.SEEDS: ("B2/S", {2}, set()),
+            RuleSet.DIAMOEBA: ("B35678/S5678", {3, 5, 6, 7, 8}, {5, 6, 7, 8}),
+            RuleSet.LIFE_WITHOUT_DEATH: ("B3/S012345678", {3}, {0, 1, 2, 3, 4, 5, 6, 7, 8})
+        }
+        
+        _, birth, survival = rule_definitions[rule_set]
+        return birth, survival
+    
+    def set_rule_set(self, rule_set: RuleSet) -> None:
+        """Change the rule set for the cellular automaton."""
+        self.rule_set = rule_set
+        self.birth_rules, self.survival_rules = self._parse_rules(rule_set)
         
     def set_cell(self, x: int, y: int, alive: bool) -> None:
         """Set the state of a cell at position (x, y)."""
@@ -54,7 +100,7 @@ class GameOfLife:
         return count
     
     def next_generation(self) -> None:
-        """Advance the game by one generation."""
+        """Advance the game by one generation using the current rule set."""
         new_grid = np.zeros((self.height, self.width), dtype=bool)
         
         for y in range(self.height):
@@ -62,14 +108,14 @@ class GameOfLife:
                 neighbors = self.count_neighbors(x, y)
                 current_state = self.grid[y, x]
                 
-                # Apply Conway's rules
+                # Apply current rule set
                 if current_state:
-                    # Living cell
-                    if neighbors == 2 or neighbors == 3:
+                    # Living cell - check survival rules
+                    if neighbors in self.survival_rules:
                         new_grid[y, x] = True
                 else:
-                    # Dead cell
-                    if neighbors == 3:
+                    # Dead cell - check birth rules
+                    if neighbors in self.birth_rules:
                         new_grid[y, x] = True
         
         self.grid = new_grid
@@ -120,6 +166,7 @@ class GameOfLife:
     def get_patterns(self) -> dict:
         """Get dictionary of predefined patterns."""
         return {
+            # Classic Conway patterns
             'glider': [
                 [0, 1, 0],
                 [0, 0, 1],
@@ -146,5 +193,97 @@ class GameOfLife:
                 [1, 1, 0, 0],
                 [0, 0, 1, 1],
                 [0, 0, 1, 1]
+            ],
+            # HighLife patterns
+            'replicator': [
+                [1, 1, 0, 1, 1],
+                [1, 0, 0, 0, 1],
+                [0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 1],
+                [1, 1, 0, 1, 1]
+            ],
+            # Day & Night patterns
+            'day_night_oscillator': [
+                [1, 1, 1, 1],
+                [1, 0, 0, 1],
+                [1, 0, 0, 1],
+                [1, 1, 1, 1]
+            ],
+            # Maze patterns
+            'maze_seed': [
+                [1, 0, 1, 0, 1],
+                [0, 1, 0, 1, 0],
+                [1, 0, 1, 0, 1],
+                [0, 1, 0, 1, 0],
+                [1, 0, 1, 0, 1]
+            ],
+            # Coral patterns
+            'coral_seed': [
+                [1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 1],
+                [1, 0, 1, 0, 1],
+                [1, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1]
+            ],
+            # Seeds patterns
+            'seeds_line': [
+                [1, 0, 1, 0, 1, 0, 1, 0, 1]
+            ],
+            # Diamoeba patterns
+            'diamoeba_seed': [
+                [0, 1, 1, 1, 0],
+                [1, 0, 0, 0, 1],
+                [1, 0, 1, 0, 1],
+                [1, 0, 0, 0, 1],
+                [0, 1, 1, 1, 0]
+            ],
+            # Life without Death patterns
+            'lwd_glider': [
+                [1, 1, 1],
+                [1, 0, 0],
+                [0, 1, 0]
+            ],
+            # Complex patterns
+            'pulsar': [
+                [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+                [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0],
+                [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0]
+            ],
+            'gosper_glider_gun': [
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             ]
         }
+    
+    def get_rule_set_info(self) -> Dict[str, str]:
+        """Get information about the current rule set."""
+        rule_info = {
+            RuleSet.CONWAY: "Classic Conway's Game of Life - Creates stable patterns, oscillators, and gliders",
+            RuleSet.HIGHLIFE: "HighLife - Similar to Conway but with replicator patterns that can create infinite growth",
+            RuleSet.DAY_NIGHT: "Day & Night - Creates symmetric patterns with interesting oscillatory behavior",
+            RuleSet.MAZE: "Maze - Generates maze-like structures and corridors",
+            RuleSet.CORAL: "Coral - Creates coral-like branching patterns that grow outward",
+            RuleSet.SEEDS: "Seeds - Simple rule that creates sparse, seed-like patterns",
+            RuleSet.DIAMOEBA: "Diamoeba - Creates amoeba-like patterns that can grow and contract",
+            RuleSet.LIFE_WITHOUT_DEATH: "Life without Death - Cells never die, only grow and spread"
+        }
+        return rule_info.get(self.rule_set, "Unknown rule set")
+    
+    def get_available_rule_sets(self) -> List[RuleSet]:
+        """Get list of all available rule sets."""
+        return list(RuleSet)

@@ -4,11 +4,13 @@
 A Python implementation of Conway's Game of Life that generates music based on the evolving patterns of cellular automata. Each living cell contributes to a musical composition, creating dynamic soundscapes that evolve with the game.
 
 ## Features
-- Interactive Conway's Game of Life simulation
+- Interactive Conway's Game of Life simulation with multiple rule sets
 - Real-time musical generation based on cell patterns
 - Visual grid display with pygame
 - User interaction for setting initial patterns
 - Multiple musical modes and scales
+- 8 different cellular automaton rule sets for diverse patterns
+- Extensive pattern library with rule-specific patterns
 
 ## Dependencies
 - pygame 2.5.2 - For graphics and sound
@@ -32,6 +34,8 @@ python musical_gol.py
 - M: Toggle music mode
 - C: Clear grid
 - Arrow keys: Change musical scale/pattern
+- 1-8: Switch between different rule sets
+- P: Cycle through predefined patterns
 
 ## Database Schema
 This project does not use a database - all state is maintained in memory.
@@ -87,7 +91,69 @@ The musical system maps cellular patterns to musical elements through several mo
 - Volume control and decay systems
 - Multiple simultaneous sound channels
 
+## Rule Sets
+The application now supports 8 different cellular automaton rule sets, each creating unique patterns:
+
+### 1. Conway (B3/S23) - Classic
+- The original Conway's Game of Life
+- Creates stable patterns, oscillators, and gliders
+- Perfect for traditional Game of Life patterns
+
+### 2. HighLife (B36/S23) - Replicator
+- Similar to Conway but with additional birth condition
+- Features replicator patterns that can create infinite growth
+- More chaotic and unpredictable than Conway
+
+### 3. Day & Night (B3678/S34678) - Symmetric
+- Creates symmetric patterns with interesting oscillatory behavior
+- Good for creating balanced, aesthetic patterns
+- Exhibits both growth and decay phases
+
+### 4. Maze (B3/S12345) - Structural
+- Generates maze-like structures and corridors
+- Creates branching, organic-looking patterns
+- Good for creating complex, interconnected structures
+
+### 5. Coral (B3/S45678) - Growth
+- Creates coral-like branching patterns that grow outward
+- Tends to create dense, spreading patterns
+- Good for creating natural-looking growth patterns
+
+### 6. Seeds (B2/S) - Sparse
+- Simple rule that creates sparse, seed-like patterns
+- Creates very sparse, scattered patterns
+- Good for creating minimalist, ambient patterns
+
+### 7. Diamoeba (B35678/S5678) - Organic
+- Creates amoeba-like patterns that can grow and contract
+- Creates flowing, organic-looking patterns
+- Good for creating fluid, dynamic patterns
+
+### 8. Life without Death (B3/S012345678) - Persistent
+- Cells never die, only grow and spread
+- Creates ever-growing, persistent patterns
+- Good for creating continuous, evolving patterns
+
+## Pattern Library
+The application includes an extensive pattern library with patterns optimized for different rule sets:
+- Classic Conway patterns (glider, blinker, block, beehive, toad, beacon)
+- HighLife patterns (replicator)
+- Day & Night patterns (oscillators)
+- Maze patterns (maze seeds)
+- Coral patterns (coral seeds)
+- Seeds patterns (sparse lines)
+- Diamoeba patterns (organic shapes)
+- Life without Death patterns (persistent gliders)
+- Complex patterns (pulsar, Gosper glider gun)
+
 ## Version History
+- v1.1.0: Enhanced with multiple rule sets and expanded pattern library
+  - Added 8 different cellular automaton rule sets
+  - Implemented flexible rule system architecture
+  - Added rule-specific patterns and seeds
+  - Enhanced pattern library with 20+ patterns
+  - Added rule switching functionality
+  - Updated documentation with rule set information
 - v1.0.0: Initial implementation with basic musical generation
   - Core Game of Life logic with numpy optimization
   - Four musical generation modes

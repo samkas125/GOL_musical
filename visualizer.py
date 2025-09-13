@@ -5,7 +5,7 @@ Pygame visualization for Conway's Game of Life with musical integration and note
 import pygame
 import sys
 from typing import Tuple, Optional
-from game_of_life import GameOfLife
+from game_of_life import GameOfLife, RuleSet
 from music_generator import MusicGenerator
 
 
@@ -101,6 +101,10 @@ class GameVisualizer:
         self.show_notes = True  # Option to toggle note display
         self.music_enabled = True
         self.generation_speed = 20  # Frames per generation
+
+        # Rule set management
+        self.available_rule_sets = self.game.get_available_rule_sets()
+        self.current_rule_index = 0  # Start with Conway (index 0)
 
         # UI state
         self.selected_pattern = None
@@ -358,6 +362,35 @@ class GameVisualizer:
         # Draw the text
         self.screen.blit(text_surface, text_rect)
 
+    def _switch_rule_set(self, rule_index: int) -> None:
+        """Switch to a specific rule set by index."""
+        if 0 <= rule_index < len(self.available_rule_sets):
+            self.current_rule_index = rule_index
+            rule_set = self.available_rule_sets[rule_index]
+            self.game.set_rule_set(rule_set)
+            print(f"Switched to rule set: {rule_set.value}")
+
+    def _cycle_rule_set(self) -> None:
+        """Cycle to the next rule set."""
+        self.current_rule_index = (self.current_rule_index + 1) % len(self.available_rule_sets)
+        rule_set = self.available_rule_sets[self.current_rule_index]
+        self.game.set_rule_set(rule_set)
+        print(f"Switched to rule set: {rule_set.value}")
+
+    def _cycle_pattern(self) -> None:
+        """Cycle through available patterns."""
+        pattern_names = list(self.patterns.keys())
+        if not pattern_names:
+            return
+        
+        if self.selected_pattern is None:
+            self.selected_pattern = pattern_names[0]
+        else:
+            current_index = pattern_names.index(self.selected_pattern)
+            self.selected_pattern = pattern_names[(current_index + 1) % len(pattern_names)]
+        
+        print(f"Selected pattern: {self.selected_pattern}")
+
     def _draw_ui(self) -> None:
         """Draw the user interface."""
         ui_y = self.height * self.cell_size + 10  # Increased margin
@@ -369,10 +402,12 @@ class GameVisualizer:
                         (0, ui_y), (self.screen_width, ui_y))
 
         # Status information
+        current_rule = self.available_rule_sets[self.current_rule_index]
         status_text = [
             f"Generation: {self.game.generation}",
             f"Population: {len(self.game.get_living_cells())}",
             f"Density: {self.game.get_cell_density():.3f}",
+            f"Rule Set: {current_rule.value}",
             f"Speed: {self.generation_speed}",
             f"Volume: {self.music_gen.max_volume:.1f}"
         ]
@@ -389,6 +424,7 @@ class GameVisualizer:
             "SPACE: Pause/Play | R: Reset | M: Music On/Off | C: Clear | N: Notes On/Off",
             "1-4: Scale (Major/Minor/Pentatonic/Chromatic)",
             "Q/W/E/T: Mode (Position/Density/Pattern/Harmonic)",
+            "F1-F8: Rule Sets | TAB: Cycle Rules | P: Cycle Patterns",
             "G: Grid | +/-: Speed | Up/Down: Volume",
             "Left Click: Toggle Cell | Right Click: Place Pattern"
         ]
@@ -404,6 +440,7 @@ class GameVisualizer:
             f"Mode: {self.music_gen.current_mode}",
             f"Music: {'ON' if self.music_enabled else 'OFF'}",
             f"Notes: {'ON' if self.show_notes else 'OFF'}",
+            f"Pattern: {self.selected_pattern if self.selected_pattern else 'None'}",
             f"Status: {'PAUSED' if self.paused else 'RUNNING'}"
         ]
 

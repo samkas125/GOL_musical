@@ -115,14 +115,15 @@ class GameVisualizer:
         self.patterns = self.game.get_patterns()
         
         # Scale cycling
-        self.available_scales = [
-            'major', 'minor', 'pentatonic', 'chromatic',
-            'natural_minor', 'harmonic_minor', 'melodic_minor',
-            'major_pentatonic', 'minor_pentatonic', 'blues',
-            'ionian', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'aeolian', 'locrian',
-            'whole_tone', 'half_whole_diminished', 'whole_half_diminished',
-            'bebop_dominant', 'bebop_major', 'harmonic_major', 'hungarian_minor'
-        ]
+        self.available_scales = ['major', 'minor', 'pentatonic', 'chromatic', 'blues']
+        # self.available_scales = [
+        #     'major', 'minor', 'pentatonic', 'chromatic',
+        #     'natural_minor', 'harmonic_minor', 'melodic_minor',
+        #     'major_pentatonic', 'minor_pentatonic', 'blues',
+        #     'ionian', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'aeolian', 'locrian',
+        #     'whole_tone', 'half_whole_diminished', 'whole_half_diminished',
+        #     'bebop_dominant', 'bebop_major', 'harmonic_major', 'hungarian_minor'
+        # ]
         self.current_scale_index = 0
 
         # Animation

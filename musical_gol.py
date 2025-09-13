@@ -35,6 +35,9 @@ def main():
         print("- M: Toggle music")
         print("- 1-4: Change musical scale")
         print("- Q/W/E/T: Change musical mode")
+        print("- F1-F8: Switch rule sets")
+        print("- TAB: Cycle through rule sets")
+        print("- P: Cycle through patterns")
         print("- See full controls in the application window")
         print("\nEnjoy the musical evolution!")
         

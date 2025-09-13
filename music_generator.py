@@ -54,8 +54,8 @@ class MusicGenerator:
         pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
 
         # Musical parameters
-        self.note_duration = 0.1  # Duration of each note in seconds
-        self.max_volume = 0.3
+        self.note_duration = .3  # Duration of each note in seconds
+        self.max_volume = 0.25
         self.volume_decay = 0.95
 
         # Active sounds tracking

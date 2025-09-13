@@ -109,7 +109,8 @@ class MusicGenerator:
         
         for x, y in living_cells:
             frequency = self._get_note_frequency(x, y)
-            volume = self.max_volume * (0.5 + 0.5 * math.sin(self.game.generation * 0.1))
+            # volume = self.max_volume * (0.5 + 0.5 * math.sin(self.game.generation * 0.1))
+            volume = self.max_volume
             
             # Create and play note
             sound = self._generate_tone(frequency, self.note_duration, volume)

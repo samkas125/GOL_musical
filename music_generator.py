@@ -153,7 +153,8 @@ class MusicGenerator:
         # Musical parameters
         self.note_duration = 0.3
         self.max_volume = 0.25
-        self.volume_decay = 0.95
+        self.volume_decay = 0.7
+        self.sustain_duration = 0.3  # How long notes sustain (like piano pedal)
         
 
         # Active sounds tracking
@@ -178,14 +179,39 @@ class MusicGenerator:
         self.current_mode = 'position'
 
     def _generate_tone(self, frequency: float, duration: float, volume: float = 0.3) -> pygame.mixer.Sound:
-        """Generate a pure tone at the specified frequency."""
+        """Generate a pure tone with sustain effect (like piano pedal)."""
         sample_rate = pygame.mixer.get_init()[0]
-        frames = int(duration * sample_rate)
+        total_duration = duration + self.sustain_duration
+        frames = int(total_duration * sample_rate)
 
         # Generate sine wave
         wave = np.zeros(frames)
+        t = np.linspace(0, total_duration, frames, False)
+        
+        # Create sustain envelope - quick attack, long sustain, slow decay
+        envelope = np.ones(frames)
+        
+        # Quick attack (first 10% of note duration)
+        attack_frames = int(0.1 * duration * sample_rate)
+        if attack_frames > 0:
+            envelope[:attack_frames] = np.linspace(0, 1, attack_frames)
+        
+        # Sustain phase (note duration + sustain duration)
+        sustain_start = attack_frames
+        sustain_end = int(duration * sample_rate)
+        if sustain_end > sustain_start:
+            envelope[sustain_start:sustain_end] = 1.0
+        
+        # Long sustain with gradual decay (sustain duration)
+        sustain_frames = int(self.sustain_duration * sample_rate)
+        if sustain_frames > 0 and sustain_end + sustain_frames < frames:
+            # Gradual decay during sustain
+            decay_curve = np.exp(-t[sustain_end:sustain_end + sustain_frames] * 2)
+            envelope[sustain_end:sustain_end + sustain_frames] = decay_curve
+        
+        # Generate the wave
         for i in range(frames):
-            wave[i] = volume * math.sin(2 * math.pi * frequency * i / sample_rate)
+            wave[i] = volume * math.sin(2 * math.pi * frequency * i / sample_rate) * envelope[i]
 
         # Convert to 16-bit signed integers
         wave = (wave * 32767).astype(np.int16)
@@ -480,6 +506,10 @@ class MusicGenerator:
     def set_volume(self, volume: float) -> None:
         """Set the maximum volume for generated sounds."""
         self.max_volume = max(0.0, min(1.0, volume))
+
+    def set_sustain_duration(self, duration: float) -> None:
+        """Set the sustain duration for notes (like piano pedal)."""
+        self.sustain_duration = max(0.0, min(3.0, duration))
 
 
     def stop_all_sounds(self) -> None:

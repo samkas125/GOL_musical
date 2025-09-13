@@ -186,6 +186,10 @@ class GameVisualizer:
             self.music_gen.max_volume = min(1.0, self.music_gen.max_volume + 0.1)
         elif event.key == pygame.K_DOWN:
             self.music_gen.max_volume = max(0.0, self.music_gen.max_volume - 0.1)
+        elif event.key == pygame.K_LEFT:
+            self.music_gen.set_sustain_duration(max(0.0, self.music_gen.sustain_duration - 0.2))
+        elif event.key == pygame.K_RIGHT:
+            self.music_gen.set_sustain_duration(min(3.0, self.music_gen.sustain_duration + 0.2))
 
         # Rule set switching (F1-F8 keys)
         elif event.key == pygame.K_F1:
@@ -387,7 +391,8 @@ class GameVisualizer:
             f"Density: {self.game.get_cell_density():.3f}",
             f"Rule Set: {current_rule.value}",
             f"Speed: {self.generation_speed}",
-            f"Volume: {self.music_gen.max_volume:.1f}"
+            f"Volume: {self.music_gen.max_volume:.1f}",
+            f"Sustain: {self.music_gen.sustain_duration:.1f}s"
         ]
 
         x_offset = 15  # Increased margin
@@ -402,8 +407,8 @@ class GameVisualizer:
             "SPACE: Pause/Play | R: Reset | M: Music On/Off | N: Notes On/Off",
             "S: Cycle Scales | Q/W/E/T: Mode (Position/Density/Pattern/Harmonic)",
             "F1-F8: Rule Sets | TAB: Cycle Rules | P: Cycle Patterns",
-            "G: Grid | +/-: Speed | Up/Down: Volume | WHITE CELLS = Playing Notes",
-            "Left Click: Toggle Cell | Right Click: Place Pattern"
+            "G: Grid | +/-: Speed | Up/Down: Volume | Left/Right: Sustain",
+            "Left Click: Toggle Cell | Right Click: Place Pattern | WHITE CELLS = Playing Notes"
         ]
 
         control_line_height = max(16, self.cell_size - 2)  # Slightly smaller for controls
@@ -417,6 +422,7 @@ class GameVisualizer:
             f"Mode: {self.music_gen.current_mode}",
             f"Music: {'ON' if self.music_enabled else 'OFF'}",
             f"Notes: {'ON' if self.show_notes else 'OFF'}",
+            f"Sustain: {self.music_gen.sustain_duration:.1f}s",
             f"Pattern: {self.selected_pattern if self.selected_pattern else 'None'}",
             f"Status: {'PAUSED' if self.paused else 'RUNNING'}"
         ]

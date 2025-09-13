@@ -200,8 +200,8 @@ class GameVisualizer:
             self.music_gen.set_scale('half_whole_diminished')
         elif event.key == pygame.K_o:
             self.music_gen.set_scale('whole_half_diminished')
-        elif event.key == pygame.K_p:
-            self.music_gen.set_scale('bebop_dominant')
+        # elif event.key == pygame.K_p:
+        #     self.music_gen.set_scale('bebop_dominant')
         elif event.key == pygame.K_s:
             self.music_gen.set_scale('bebop_major')
         elif event.key == pygame.K_u:

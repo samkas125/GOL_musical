@@ -298,17 +298,17 @@ class MusicGenerator:
 
         if density > 0:
             # Map density ranges to scale families (PRESERVED FROM ORIGINAL)
-            if density < 0.001:
+            if density < 0.005:
                 chosen_scale = 'major_pentatonic'
-            elif density < 0.005:
-                chosen_scale = 'major'
             elif density < 0.01:
-                chosen_scale = 'minor'
+                chosen_scale = 'major'
             elif density < 0.05:
-                chosen_scale = 'dorian'
-            elif density < 0.1:
                 chosen_scale = 'mixolydian'
+            elif density < 0.1:
+                chosen_scale = 'dorian'
             elif density < 0.15:
+                chosen_scale = 'minor'
+            elif density < 0.25:
                 chosen_scale = 'blues'
             else:
                 chosen_scale = 'chromatic'

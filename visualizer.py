@@ -43,6 +43,40 @@ class GameVisualizer:
             'ui_border': (80, 80, 80)
         }
 
+        #  Color palettes by scale (warm vs cool)
+        self.scale_colors = {
+            # Happy/Bright scales → warmer colors
+            'major': (255, 215, 0),            # gold
+            'ionian': (255, 200, 50),
+            'lydian': (255, 165, 0),           # orange
+            'mixolydian': (255, 140, 0),
+
+            # Sad/Dark scales → cooler colors
+            'minor': (100, 149, 237),          # cornflower blue
+            'natural_minor': (70, 130, 180),   # steel blue
+            'harmonic_minor': (65, 105, 225),  # royal blue
+            'melodic_minor': (72, 61, 139),    # dark slate blue
+            'aeolian': (95, 158, 160),         # cadet blue
+            'dorian': (123, 104, 238),         # medium slate blue
+            'phrygian': (106, 90, 205),        # slate blue
+            'locrian': (25, 25, 112),          # midnight blue
+
+            # Exotic/neutral → mix of vibrant colors
+            'pentatonic': (60, 179, 113),      # medium sea green
+            'major_pentatonic': (50, 205, 50), # lime green
+            'minor_pentatonic': (46, 139, 87), # sea green
+            'blues': (30, 144, 255),           # dodger blue
+
+            'chromatic': (220, 20, 60),        # crimson
+            'whole_tone': (255, 99, 71),       # tomato
+            'half_whole_diminished': (186, 85, 211),  # orchid
+            'whole_half_diminished': (138, 43, 226),  # blue violet
+            'bebop_dominant': (199, 21, 133),  # medium violet red
+            'bebop_major': (255, 105, 180),    # hot pink
+            'harmonic_major': (255, 69, 0),    # red-orange
+            'hungarian_minor': (148, 0, 211)   # dark violet
+        }
+
         # Initialize pygame
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -123,6 +157,51 @@ class GameVisualizer:
         elif event.key == pygame.K_4:
             self.music_gen.set_scale('chromatic')
 
+        # Additional scales
+        elif event.key == pygame.K_5:
+            self.music_gen.set_scale('natural_minor')
+        elif event.key == pygame.K_6:
+            self.music_gen.set_scale('harmonic_minor')
+        elif event.key == pygame.K_7:
+            self.music_gen.set_scale('melodic_minor')
+        elif event.key == pygame.K_8:
+            self.music_gen.set_scale('major_pentatonic')
+        elif event.key == pygame.K_9:
+            self.music_gen.set_scale('minor_pentatonic')
+        elif event.key == pygame.K_0:
+            self.music_gen.set_scale('blues')
+
+        # Letter keys (skipping reserved ones)
+        elif event.key == pygame.K_a:
+            self.music_gen.set_scale('ionian')
+        elif event.key == pygame.K_b:
+            self.music_gen.set_scale('dorian')
+        elif event.key == pygame.K_d:
+            self.music_gen.set_scale('phrygian')
+        elif event.key == pygame.K_f:
+            self.music_gen.set_scale('lydian')
+        elif event.key == pygame.K_h:
+            self.music_gen.set_scale('mixolydian')
+        elif event.key == pygame.K_i:
+            self.music_gen.set_scale('aeolian')
+        elif event.key == pygame.K_j:
+            self.music_gen.set_scale('locrian')
+        elif event.key == pygame.K_k:
+            self.music_gen.set_scale('whole_tone')
+        elif event.key == pygame.K_l:
+            self.music_gen.set_scale('half_whole_diminished')
+        elif event.key == pygame.K_o:
+            self.music_gen.set_scale('whole_half_diminished')
+        elif event.key == pygame.K_p:
+            self.music_gen.set_scale('bebop_dominant')
+        elif event.key == pygame.K_s:
+            self.music_gen.set_scale('bebop_major')
+        elif event.key == pygame.K_u:
+            self.music_gen.set_scale('harmonic_major')
+        elif event.key == pygame.K_v:
+            self.music_gen.set_scale('hungarian_minor')
+
+
         elif event.key == pygame.K_q:
             self.music_gen.set_mode('position')
         elif event.key == pygame.K_w:
@@ -141,6 +220,32 @@ class GameVisualizer:
             self.music_gen.max_volume = min(1.0, self.music_gen.max_volume + 0.1)
         elif event.key == pygame.K_DOWN:
             self.music_gen.max_volume = max(0.0, self.music_gen.max_volume - 0.1)
+
+        # Rule set switching (F1-F8 keys)
+        elif event.key == pygame.K_F1:
+            self._switch_rule_set(0)  # Conway
+        elif event.key == pygame.K_F2:
+            self._switch_rule_set(1)  # HighLife
+        elif event.key == pygame.K_F3:
+            self._switch_rule_set(2)  # Day & Night
+        elif event.key == pygame.K_F4:
+            self._switch_rule_set(3)  # Maze
+        elif event.key == pygame.K_F5:
+            self._switch_rule_set(4)  # Coral
+        elif event.key == pygame.K_F6:
+            self._switch_rule_set(5)  # Seeds
+        elif event.key == pygame.K_F7:
+            self._switch_rule_set(6)  # Diamoeba
+        elif event.key == pygame.K_F8:
+            self._switch_rule_set(7)  # Life without Death
+
+        # Cycle through rule sets with Tab
+        elif event.key == pygame.K_TAB:
+            self._cycle_rule_set()
+
+        # Pattern cycling with P key
+        elif event.key == pygame.K_p:
+            self._cycle_pattern()
 
     def _handle_mouse_click(self, event: pygame.event.Event) -> None:
         """Handle mouse clicks."""
@@ -214,7 +319,8 @@ class GameVisualizer:
 
                 if self.game.get_cell(x, y):
                     # Living cell - always yellow for musical cells
-                    color = self.colors['living_cell']
+                    current_scale = self.music_gen.current_scale
+                    color = self.scale_colors.get(current_scale, self.colors['living_cell'])
 
                     pygame.draw.rect(self.screen, color, rect)
 

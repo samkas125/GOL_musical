@@ -154,6 +154,7 @@ class MusicGenerator:
         self.note_duration = 0.3
         self.max_volume = 0.25
         self.volume_decay = 0.95
+        
 
         # Active sounds tracking
         self.active_sounds = []
@@ -195,6 +196,7 @@ class MusicGenerator:
         stereo_wave[:, 1] = wave
 
         return pygame.mixer.Sound(stereo_wave)
+
 
     def _get_note_frequency(self, x: int, y: int, scale: str = None) -> float:
         """Map cell position to musical frequency."""
@@ -478,6 +480,7 @@ class MusicGenerator:
     def set_volume(self, volume: float) -> None:
         """Set the maximum volume for generated sounds."""
         self.max_volume = max(0.0, min(1.0, volume))
+
 
     def stop_all_sounds(self) -> None:
         """Stop all currently playing sounds."""

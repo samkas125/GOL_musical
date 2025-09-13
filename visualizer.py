@@ -113,6 +113,17 @@ class GameVisualizer:
         # UI state
         self.selected_pattern = None
         self.patterns = self.game.get_patterns()
+        
+        # Scale cycling
+        self.available_scales = [
+            'major', 'minor', 'pentatonic', 'chromatic',
+            'natural_minor', 'harmonic_minor', 'melodic_minor',
+            'major_pentatonic', 'minor_pentatonic', 'blues',
+            'ionian', 'dorian', 'phrygian', 'lydian', 'mixolydian', 'aeolian', 'locrian',
+            'whole_tone', 'half_whole_diminished', 'whole_half_diminished',
+            'bebop_dominant', 'bebop_major', 'harmonic_major', 'hungarian_minor'
+        ]
+        self.current_scale_index = 0
 
         # Animation
         self.frame_counter = 0
@@ -146,68 +157,15 @@ class GameVisualizer:
         elif event.key == pygame.K_m:
             self.music_enabled = not self.music_enabled
 
-        elif event.key == pygame.K_c:
-            self.game.clear_grid()
-            self.cell_ages = {}
-
         elif event.key == pygame.K_g:
             self.show_grid = not self.show_grid
 
         elif event.key == pygame.K_n:  # Toggle note display
             self.show_notes = not self.show_notes
 
-        elif event.key == pygame.K_1:
-            self.music_gen.set_scale('major')
-        elif event.key == pygame.K_2:
-            self.music_gen.set_scale('minor')
-        elif event.key == pygame.K_3:
-            self.music_gen.set_scale('pentatonic')
-        elif event.key == pygame.K_4:
-            self.music_gen.set_scale('chromatic')
-
-        # Additional scales
-        elif event.key == pygame.K_5:
-            self.music_gen.set_scale('natural_minor')
-        elif event.key == pygame.K_6:
-            self.music_gen.set_scale('harmonic_minor')
-        elif event.key == pygame.K_7:
-            self.music_gen.set_scale('melodic_minor')
-        elif event.key == pygame.K_8:
-            self.music_gen.set_scale('major_pentatonic')
-        elif event.key == pygame.K_9:
-            self.music_gen.set_scale('minor_pentatonic')
-        elif event.key == pygame.K_0:
-            self.music_gen.set_scale('blues')
-
-        # Letter keys for more scales
-        elif event.key == pygame.K_a:
-            self.music_gen.set_scale('ionian')
-        elif event.key == pygame.K_b:
-            self.music_gen.set_scale('dorian')
-        elif event.key == pygame.K_d:
-            self.music_gen.set_scale('phrygian')
-        elif event.key == pygame.K_f:
-            self.music_gen.set_scale('lydian')
-        elif event.key == pygame.K_h:
-            self.music_gen.set_scale('mixolydian')
-        elif event.key == pygame.K_i:
-            self.music_gen.set_scale('aeolian')
-        elif event.key == pygame.K_j:
-            self.music_gen.set_scale('locrian')
-        elif event.key == pygame.K_k:
-            self.music_gen.set_scale('whole_tone')
-        elif event.key == pygame.K_l:
-            self.music_gen.set_scale('half_whole_diminished')
-        elif event.key == pygame.K_o:
-            self.music_gen.set_scale('whole_half_diminished')
-        # elif event.key == pygame.K_p:
-        #     self.music_gen.set_scale('bebop_dominant')
+        # Scale cycling with S key
         elif event.key == pygame.K_s:
-            self.music_gen.set_scale('bebop_major')
-        elif event.key == pygame.K_u:
-            self.music_gen.set_scale('harmonic_major')
-        elif event.key == pygame.K_v:
-            self.music_gen.set_scale('hungarian_minor')
+            self._cycle_scale()
 
         elif event.key == pygame.K_q:
             self.music_gen.set_mode('position')
@@ -217,6 +175,7 @@ class GameVisualizer:
             self.music_gen.set_mode('pattern')
         elif event.key == pygame.K_t:
             self.music_gen.set_mode('harmonic')
+
 
         elif event.key == pygame.K_PLUS or event.key == pygame.K_EQUALS:
             self.generation_speed = max(1, self.generation_speed - 1)
@@ -251,7 +210,7 @@ class GameVisualizer:
             self._cycle_rule_set()
 
         # Pattern cycling with P key (changed from P to X to avoid conflict)
-        elif event.key == pygame.K_x:
+        elif event.key == pygame.K_p:
             self._cycle_pattern()
 
     def _handle_mouse_click(self, event: pygame.event.Event) -> None:
@@ -389,6 +348,13 @@ class GameVisualizer:
         self.game.set_rule_set(rule_set)
         print(f"Switched to rule set: {rule_set.value}")
 
+    def _cycle_scale(self) -> None:
+        """Cycle through available musical scales."""
+        self.current_scale_index = (self.current_scale_index + 1) % len(self.available_scales)
+        scale = self.available_scales[self.current_scale_index]
+        self.music_gen.set_scale(scale)
+        print(f"Switched to scale: {scale}")
+
     def _cycle_pattern(self) -> None:
         """Cycle through available patterns."""
         pattern_names = list(self.patterns.keys())
@@ -433,11 +399,10 @@ class GameVisualizer:
         # Controls - adjusted spacing for larger fonts
         controls_y = ui_y + 10 + len(status_text) * line_height + 15
         controls_text = [
-            "SPACE: Pause/Play | R: Reset | M: Music On/Off | C: Clear | N: Notes On/Off",
-            "1-4: Scale (Major/Minor/Pentatonic/Chromatic) | WHITE CELLS = Playing Notes",
-            "Q/W/E/T: Mode (Position/Density/Pattern/Harmonic)",
-            "F1-F8: Rule Sets | TAB: Cycle Rules | X: Cycle Patterns",
-            "G: Grid | +/-: Speed | Up/Down: Volume",
+            "SPACE: Pause/Play | R: Reset | M: Music On/Off | N: Notes On/Off",
+            "S: Cycle Scales | Q/W/E/T: Mode (Position/Density/Pattern/Harmonic)",
+            "F1-F8: Rule Sets | TAB: Cycle Rules | P: Cycle Patterns",
+            "G: Grid | +/-: Speed | Up/Down: Volume | WHITE CELLS = Playing Notes",
             "Left Click: Toggle Cell | Right Click: Place Pattern"
         ]
 

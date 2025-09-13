@@ -28,14 +28,27 @@ python musical_gol.py
 ```
 
 ## Controls
-- Left click: Toggle cell state
-- Space: Start/pause simulation
-- R: Reset grid
-- M: Toggle music mode
-- C: Clear grid
-- Arrow keys: Change musical scale/pattern
-- 1-8: Switch between different rule sets
-- P: Cycle through predefined patterns
+
+### Basic Controls
+- **Left Click**: Toggle cell state
+- **Space**: Start/pause simulation
+- **R**: Reset grid
+- **M**: Toggle music mode
+- **N**: Toggle note display
+- **G**: Toggle grid lines
+- **+/-**: Adjust generation speed
+- **Up/Down**: Adjust volume
+- **Right Click**: Place selected pattern
+
+### Musical Controls
+- **S**: Cycle through all musical scales (24 scales total)
+- **Q/W/E/T**: Switch musical modes (Position/Density/Pattern/Harmonic)
+
+### Pattern & Rule Controls
+- **P**: Cycle through predefined patterns
+- **F1-F8**: Switch between different rule sets
+- **TAB**: Cycle through rule sets
+- **WHITE CELLS**: Currently playing notes (visual feedback)
 
 ## Database Schema
 This project does not use a database - all state is maintained in memory.
@@ -90,6 +103,14 @@ The musical system maps cellular patterns to musical elements through several mo
 - Stereo output with configurable sample rates
 - Volume control and decay systems
 - Multiple simultaneous sound channels
+
+## Musical Features
+
+### Visual Feedback
+- **Playing Notes**: Cells currently playing notes are highlighted in white
+- **Scale Colors**: Different scales use different color palettes
+- **Real-time Settings**: Live display of current musical parameters
+- **Consolidated Controls**: Simple scale cycling with S key
 
 ## Rule Sets
 The application now supports 8 different cellular automaton rule sets, each creating unique patterns:
@@ -147,6 +168,15 @@ The application includes an extensive pattern library with patterns optimized fo
 - Complex patterns (pulsar, Gosper glider gun)
 
 ## Version History
+- v1.2.0: Major musical enhancement with rich sound generation
+  - Enhanced tone generation with multiple waveforms and harmonic synthesis
+  - Added ADSR envelope shaping and reverb effects
+  - Implemented chord generation with density-based selection
+  - Added melodic phrasing and interval-based note transitions
+  - Enhanced rhythm patterns with syncopation and tempo control
+  - Improved visual feedback with playing note highlighting
+  - Added comprehensive musical controls and settings display
+  - Enhanced UI with real-time parameter display
 - v1.1.0: Enhanced with multiple rule sets and expanded pattern library
   - Added 8 different cellular automaton rule sets
   - Implemented flexible rule system architecture

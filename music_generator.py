@@ -51,33 +51,33 @@ class MusicGenerator:
 
     # Note names corresponding to each scale
     MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-    MINOR_NOTES = ['C', 'D♭', 'E♭', 'F', 'G', 'A♭', 'B♭']
+    MINOR_NOTES = ['C', 'Db', 'Eb', 'F', 'G', 'Ab', 'Bb']
     PENTATONIC_NOTES = ['C', 'D', 'E', 'G', 'A']
-    CHROMATIC_NOTES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'F#', 'G', 'A♭', 'A', 'B♭', 'B']
+    CHROMATIC_NOTES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
 
     # Additional note names
-    NATURAL_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']
-    HARMONIC_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B']
-    MELODIC_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A', 'B']
+    NATURAL_MINOR_NOTES = ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb']
+    HARMONIC_MINOR_NOTES = ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'B']
+    MELODIC_MINOR_NOTES = ['C', 'D', 'Eb', 'F', 'G', 'A', 'B']
     MAJOR_PENTATONIC_NOTES = ['C', 'D', 'E', 'G', 'A']
-    MINOR_PENTATONIC_NOTES = ['C', 'E♭', 'F', 'G', 'B♭']
-    BLUES_NOTES = ['C', 'E♭', 'F', 'F#', 'G', 'B♭']
+    MINOR_PENTATONIC_NOTES = ['C', 'Eb', 'F', 'G', 'Bb']
+    BLUES_NOTES = ['C', 'Eb', 'F', 'F#', 'G', 'Bb']
 
     IONIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-    DORIAN_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A', 'B♭']
-    PHRYGIAN_NOTES = ['C', 'D♭', 'E♭', 'F', 'G', 'A♭', 'B♭']
+    DORIAN_NOTES = ['C', 'D', 'Eb', 'F', 'G', 'A', 'Bb']
+    PHRYGIAN_NOTES = ['C', 'Db', 'Eb', 'F', 'G', 'Ab', 'Bb']
     LYDIAN_NOTES = ['C', 'D', 'E', 'F#', 'G', 'A', 'B']
-    MIXOLYDIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B♭']
-    AEOLIAN_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']
-    LOCRIAN_NOTES = ['C', 'D♭', 'E♭', 'F', 'G♭', 'A♭', 'B♭']
+    MIXOLYDIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'Bb']
+    AEOLIAN_NOTES = ['C', 'D', 'Eb', 'F', 'G', 'Ab', 'Bb']
+    LOCRIAN_NOTES = ['C', 'Db', 'Eb', 'F', 'Gb', 'Ab', 'Bb']
 
     WHOLE_TONE_NOTES = ['C', 'D', 'E', 'F#', 'G#', 'A#']
-    HALF_WHOLE_DIMINISHED_NOTES = ['C', 'D♭', 'E♭', 'E', 'F#', 'G', 'A', 'B♭']
-    WHOLE_HALF_DIMINISHED_NOTES = ['C', 'D', 'E♭', 'F', 'F#', 'G#', 'A', 'B']
-    BEBOP_DOMINANT_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B♭', 'B']
+    HALF_WHOLE_DIMINISHED_NOTES = ['C', 'Db', 'Eb', 'E', 'F#', 'G', 'A', 'Bb']
+    WHOLE_HALF_DIMINISHED_NOTES = ['C', 'D', 'Eb', 'F', 'F#', 'G#', 'A', 'B']
+    BEBOP_DOMINANT_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'Bb', 'B']
     BEBOP_MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'G#', 'A', 'B']
-    HARMONIC_MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'A♭', 'B']
-    HUNGARIAN_MINOR_NOTES = ['C', 'D', 'E♭', 'F#', 'G', 'A♭', 'B']
+    HARMONIC_MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'Ab', 'B']
+    HUNGARIAN_MINOR_NOTES = ['C', 'D', 'Eb', 'F#', 'G', 'Ab', 'B']
 
     def __init__(self, game: GameOfLife):
         """
@@ -91,29 +91,29 @@ class MusicGenerator:
         # Build scales and note names dictionaries
         self.scales = {
             'major': self.MAJOR_SCALE,
-            'minor': self.MINOR_SCALE,
             'pentatonic': self.PENTATONIC,
-            'chromatic': self.CHROMATIC,
-            'natural_minor': self.NATURAL_MINOR,
-            'harmonic_minor': self.HARMONIC_MINOR,
-            'melodic_minor': self.MELODIC_MINOR,
-            'major_pentatonic': self.MAJOR_PENTATONIC,
-            'minor_pentatonic': self.MINOR_PENTATONIC,
+            'minor': self.MINOR_SCALE,
+            # 'natural_minor': self.NATURAL_MINOR,
+            # 'harmonic_minor': self.HARMONIC_MINOR,
+            # 'melodic_minor': self.MELODIC_MINOR,
+            # 'major_pentatonic': self.MAJOR_PENTATONIC,
+            # 'minor_pentatonic': self.MINOR_PENTATONIC,
             'blues': self.BLUES_SCALE,
-            'ionian': self.IONIAN,
-            'dorian': self.DORIAN,
-            'phrygian': self.PHRYGIAN,
-            'lydian': self.LYDIAN,
-            'mixolydian': self.MIXOLYDIAN,
-            'aeolian': self.AEOLIAN,
-            'locrian': self.LOCRIAN,
-            'whole_tone': self.WHOLE_TONE,
-            'half_whole_diminished': self.HALF_WHOLE_DIM,
-            'whole_half_diminished': self.WHOLE_HALF_DIM,
-            'bebop_dominant': self.BEBOP_DOMINANT,
-            'bebop_major': self.BEBOP_MAJOR,
-            'harmonic_major': self.HARMONIC_MAJOR,
-            'hungarian_minor': self.HUNGARIAN_MINOR
+            'chromatic': self.CHROMATIC,
+            # 'ionian': self.IONIAN,
+            # 'dorian': self.DORIAN,
+            # 'phrygian': self.PHRYGIAN,
+            # 'lydian': self.LYDIAN,
+            # 'mixolydian': self.MIXOLYDIAN,
+            # 'aeolian': self.AEOLIAN,
+            # 'locrian': self.LOCRIAN,
+            # 'whole_tone': self.WHOLE_TONE,
+            # 'half_whole_diminished': self.HALF_WHOLE_DIM,
+            # 'whole_half_diminished': self.WHOLE_HALF_DIM,
+            # 'bebop_dominant': self.BEBOP_DOMINANT,
+            # 'bebop_major': self.BEBOP_MAJOR,
+            # 'harmonic_major': self.HARMONIC_MAJOR,
+            # 'hungarian_minor': self.HUNGARIAN_MINOR
         }
 
         self.note_names = {
@@ -121,26 +121,26 @@ class MusicGenerator:
             'minor': self.MINOR_NOTES,
             'pentatonic': self.PENTATONIC_NOTES,
             'chromatic': self.CHROMATIC_NOTES,
-            'natural_minor': self.NATURAL_MINOR_NOTES,
-            'harmonic_minor': self.HARMONIC_MINOR_NOTES,
-            'melodic_minor': self.MELODIC_MINOR_NOTES,
-            'major_pentatonic': self.MAJOR_PENTATONIC_NOTES,
-            'minor_pentatonic': self.MINOR_PENTATONIC_NOTES,
+            # 'natural_minor': self.NATURAL_MINOR_NOTES,
+            # 'harmonic_minor': self.HARMONIC_MINOR_NOTES,
+            # 'melodic_minor': self.MELODIC_MINOR_NOTES,
+            # 'major_pentatonic': self.MAJOR_PENTATONIC_NOTES,
+            # 'minor_pentatonic': self.MINOR_PENTATONIC_NOTES,
             'blues': self.BLUES_NOTES,
-            'ionian': self.IONIAN_NOTES,
-            'dorian': self.DORIAN_NOTES,
-            'phrygian': self.PHRYGIAN_NOTES,
-            'lydian': self.LYDIAN_NOTES,
-            'mixolydian': self.MIXOLYDIAN_NOTES,
-            'aeolian': self.AEOLIAN_NOTES,
-            'locrian': self.LOCRIAN_NOTES,
-            'whole_tone': self.WHOLE_TONE_NOTES,
-            'half_whole_diminished': self.HALF_WHOLE_DIMINISHED_NOTES,
-            'whole_half_diminished': self.WHOLE_HALF_DIMINISHED_NOTES,
-            'bebop_dominant': self.BEBOP_DOMINANT_NOTES,
-            'bebop_major': self.BEBOP_MAJOR_NOTES,
-            'harmonic_major': self.HARMONIC_MAJOR_NOTES,
-            'hungarian_minor': self.HUNGARIAN_MINOR_NOTES
+            # 'ionian': self.IONIAN_NOTES,
+            # 'dorian': self.DORIAN_NOTES,
+            # 'phrygian': self.PHRYGIAN_NOTES,
+            # 'lydian': self.LYDIAN_NOTES,
+            # 'mixolydian': self.MIXOLYDIAN_NOTES,
+            # 'aeolian': self.AEOLIAN_NOTES,
+            # 'locrian': self.LOCRIAN_NOTES,
+            # 'whole_tone': self.WHOLE_TONE_NOTES,
+            # 'half_whole_diminished': self.HALF_WHOLE_DIMINISHED_NOTES,
+            # 'whole_half_diminished': self.WHOLE_HALF_DIMINISHED_NOTES,
+            # 'bebop_dominant': self.BEBOP_DOMINANT_NOTES,
+            # 'bebop_major': self.BEBOP_MAJOR_NOTES,
+            # 'harmonic_major': self.HARMONIC_MAJOR_NOTES,
+            # 'hungarian_minor': self.HUNGARIAN_MINOR_NOTES
         }
 
         self.current_scale = 'major'
@@ -154,7 +154,7 @@ class MusicGenerator:
         self.note_duration = 0.3
         self.max_volume = 0.25
         self.volume_decay = 0.7
-        self.sustain_duration = 0.3  # How long notes sustain (like piano pedal)
+        self.sustain_duration = 0.2  # How long notes sustain (like piano pedal)
         
 
         # Active sounds tracking
@@ -248,7 +248,7 @@ class MusicGenerator:
         octave_offset = ((x * 7 + y * 11) % (self.octave_range * 2)) - self.octave_range
         octave_number = self.base_octave + octave_offset
 
-        return f"{base_note}{octave_number}"
+        return f"{base_note}"
 
     def _find_newborn_cells(self) -> List[Tuple[int, int]]:
         """Find cells that were just born this generation."""

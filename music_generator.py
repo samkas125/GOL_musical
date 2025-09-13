@@ -3,17 +3,18 @@
 Musical generation system for Conway's Game of Life.
 Maps cellular patterns to musical elements with note name display support.
 Includes automatic note thinning - only plays lowest newborn note per row.
+Notes that are playing are visually indicated with white cells.
 """
 
 import pygame
 import numpy as np
 import math
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Set
 from game_of_life import GameOfLife
 
 
 class MusicGenerator:
-    """Generates music based on Game of Life patterns with intelligent note thinning."""
+    """Generates music based on Game of Life patterns with intelligent note thinning and visual feedback."""
 
     # Musical scales and frequencies
     MAJOR_SCALE = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88]  # C major
@@ -163,6 +164,9 @@ class MusicGenerator:
         # Track cell ages for newborn detection
         self.previous_living_cells = set()
 
+        # Track which cells are currently playing notes (for white coloring)
+        self.playing_notes = set()  # Set of (x, y) coordinates
+
         # Musical modes
         self.modes = {
             'position': self._generate_position_based_music,
@@ -227,7 +231,7 @@ class MusicGenerator:
 
     def _thin_notes_by_row(self, cells: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
         """
-        Return only the lowest frequency (highest Y coordinate) newborn cell per row.
+        Return only the lowest frequency (highest X coordinate) newborn cell per row.
         This reduces audio clutter while maintaining musical interest.
         """
         if not cells:
@@ -263,13 +267,16 @@ class MusicGenerator:
 
     def _generate_position_based_music(self) -> None:
         """Generate music based on cell positions with automatic note thinning."""
+        # Clear previous playing notes
+        self.playing_notes.clear()
+
         # Find newborn cells
         newborn_cells = self._find_newborn_cells()
 
         # Apply automatic thinning - only lowest note per row for newborns
         thinned_cells = self._thin_notes_by_row(newborn_cells)
 
-        # Play thinned newborn notes
+        # Play thinned newborn notes and mark them as playing
         for x, y in thinned_cells:
             frequency = self._get_note_frequency(x, y)
             volume = self.max_volume
@@ -279,9 +286,14 @@ class MusicGenerator:
 
             if channel:
                 self.active_sounds.append(channel)
+                # Mark this cell as currently playing a note (for white coloring)
+                self.playing_notes.add((x, y))
 
     def _generate_density_based_music(self) -> None:
         """Generate music based on cell density patterns (keeps density-based scale changes)."""
+        # Clear previous playing notes
+        self.playing_notes.clear()
+
         density = self.game.get_cell_density()
 
         if density > 0:
@@ -317,9 +329,14 @@ class MusicGenerator:
 
                 if channel:
                     self.active_sounds.append(channel)
+                    # Mark this cell as currently playing a note (for white coloring)
+                    self.playing_notes.add((x, y))
 
     def _generate_pattern_based_music(self) -> None:
         """Generate music based on specific cell patterns."""
+        # Clear previous playing notes
+        self.playing_notes.clear()
+
         patterns = self._analyze_patterns()
 
         for pattern_type, positions in patterns.items():
@@ -344,9 +361,14 @@ class MusicGenerator:
 
                     if channel:
                         self.active_sounds.append(channel)
+                        # Mark this cell as currently playing a note (for white coloring)
+                        self.playing_notes.add((x, y))
 
     def _generate_harmonic_music(self) -> None:
         """Generate harmonic music based on population dynamics."""
+        # Clear previous playing notes (harmonic mode doesn't use visual feedback)
+        self.playing_notes.clear()
+
         population_change = self.game.get_population_change()
 
         if abs(population_change) > 0:
@@ -365,6 +387,7 @@ class MusicGenerator:
 
                     if channel:
                         self.active_sounds.append(channel)
+                        # Note: Harmonic mode doesn't highlight specific cells since it's not position-based
 
     def _analyze_patterns(self) -> Dict[str, List[Tuple[int, int]]]:
         """Analyze the grid for different types of patterns."""
@@ -423,6 +446,20 @@ class MusicGenerator:
         # Generate new music
         if self.current_mode in self.modes:
             self.modes[self.current_mode]()
+
+    def is_cell_playing_note(self, x: int, y: int) -> bool:
+        """
+        Check if a specific cell is currently playing a note.
+        Used by the visualizer to color playing cells white.
+
+        Args:
+            x: X coordinate of the cell
+            y: Y coordinate of the cell
+
+        Returns:
+            True if the cell is currently playing a note, False otherwise
+        """
+        return (x, y) in self.playing_notes
 
     def get_cell_note(self, x: int, y: int) -> Optional[str]:
         """Get the note name for a specific cell position."""

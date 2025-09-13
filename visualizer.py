@@ -1,5 +1,7 @@
+
 """
 Pygame visualization for Conway's Game of Life with musical integration and note display.
+Now with white highlighting for cells that are currently playing notes.
 """
 
 import pygame
@@ -10,9 +12,9 @@ from music_generator import MusicGenerator
 
 
 class GameVisualizer:
-    """Handles the visual display and user interaction for the Game of Life with note display."""
+    """Handles the visual display and user interaction for the Game of Life with note display and visual feedback."""
 
-    def __init__(self, width: int = 50, height: int = 50, cell_size: int = 20):  # INCREASED cell_size from 12 to 20
+    def __init__(self, width: int = 50, height: int = 50, cell_size: int = 20):
         """
         Initialize the visualizer.
 
@@ -27,7 +29,7 @@ class GameVisualizer:
 
         # Calculate screen dimensions
         self.screen_width = width * cell_size
-        self.screen_height = height * cell_size + 120  # Extra space for UI (increased slightly)
+        self.screen_height = height * cell_size + 120  # Extra space for UI
 
         # Colors
         self.colors = {
@@ -35,15 +37,17 @@ class GameVisualizer:
             'grid_lines': (40, 40, 40),
             'dead_cell': (30, 30, 30),
             'living_cell': (255, 255, 100),  # Yellow for musical cells
+            'playing_note': (255, 255, 255),  # WHITE for cells currently playing notes
             'new_cell': (255, 255, 150),
             'dying_cell': (255, 100, 100),
             'text': (255, 255, 255),
-            'note_text': (0, 0, 0),  # Black text for notes on yellow cells
+            'note_text': (0, 0, 0),  # Black text for notes on colored cells
+            'playing_note_text': (0, 0, 0),  # Black text for notes on white cells
             'ui_bg': (40, 40, 40),
             'ui_border': (80, 80, 80)
         }
 
-        #  Color palettes by scale (warm vs cool)
+        # Color palettes by scale (warm vs cool)
         self.scale_colors = {
             # Happy/Bright scales → warmer colors
             'major': (255, 215, 0),            # gold
@@ -175,7 +179,7 @@ class GameVisualizer:
         elif event.key == pygame.K_0:
             self.music_gen.set_scale('blues')
 
-        # Letter keys (skipping reserved ones)
+        # Letter keys for more scales
         elif event.key == pygame.K_a:
             self.music_gen.set_scale('ionian')
         elif event.key == pygame.K_b:
@@ -204,7 +208,6 @@ class GameVisualizer:
             self.music_gen.set_scale('harmonic_major')
         elif event.key == pygame.K_v:
             self.music_gen.set_scale('hungarian_minor')
-
 
         elif event.key == pygame.K_q:
             self.music_gen.set_mode('position')
@@ -247,8 +250,8 @@ class GameVisualizer:
         elif event.key == pygame.K_TAB:
             self._cycle_rule_set()
 
-        # Pattern cycling with P key
-        elif event.key == pygame.K_p:
+        # Pattern cycling with P key (changed from P to X to avoid conflict)
+        elif event.key == pygame.K_x:
             self._cycle_pattern()
 
     def _handle_mouse_click(self, event: pygame.event.Event) -> None:
@@ -322,9 +325,18 @@ class GameVisualizer:
                                  self.cell_size, self.cell_size)
 
                 if self.game.get_cell(x, y):
-                    # Living cell - always yellow for musical cells
-                    current_scale = self.music_gen.current_scale
-                    color = self.scale_colors.get(current_scale, self.colors['living_cell'])
+                    # Check if this cell is currently playing a note
+                    is_playing = self.music_gen.is_cell_playing_note(x, y) if self.music_enabled else False
+
+                    if is_playing:
+                        # WHITE for cells currently playing notes
+                        color = self.colors['playing_note']
+                        text_color = self.colors['playing_note_text']
+                    else:
+                        # Scale-based color for other living cells
+                        current_scale = self.music_gen.current_scale
+                        color = self.scale_colors.get(current_scale, self.colors['living_cell'])
+                        text_color = self.colors['note_text']
 
                     pygame.draw.rect(self.screen, color, rect)
 
@@ -337,7 +349,7 @@ class GameVisualizer:
                     if self.show_notes and self.music_enabled:
                         note_name = self.music_gen.get_cell_note(x, y)
                         if note_name:
-                            self._draw_note_on_cell(x, y, note_name)
+                            self._draw_note_on_cell(x, y, note_name, text_color)
 
                 else:
                     # Dead cell
@@ -348,10 +360,10 @@ class GameVisualizer:
 
         pygame.display.flip()
 
-    def _draw_note_on_cell(self, x: int, y: int, note_name: str) -> None:
-        """Draw a note name on top of a cell."""
+    def _draw_note_on_cell(self, x: int, y: int, note_name: str, text_color: Tuple[int, int, int]) -> None:
+        """Draw a note name on top of a cell with specified text color."""
         # Create text surface
-        text_surface = self.note_font.render(note_name, True, self.colors['note_text'])
+        text_surface = self.note_font.render(note_name, True, text_color)
         text_rect = text_surface.get_rect()
 
         # Center the text in the cell
@@ -382,13 +394,13 @@ class GameVisualizer:
         pattern_names = list(self.patterns.keys())
         if not pattern_names:
             return
-        
+
         if self.selected_pattern is None:
             self.selected_pattern = pattern_names[0]
         else:
             current_index = pattern_names.index(self.selected_pattern)
             self.selected_pattern = pattern_names[(current_index + 1) % len(pattern_names)]
-        
+
         print(f"Selected pattern: {self.selected_pattern}")
 
     def _draw_ui(self) -> None:
@@ -422,9 +434,9 @@ class GameVisualizer:
         controls_y = ui_y + 10 + len(status_text) * line_height + 15
         controls_text = [
             "SPACE: Pause/Play | R: Reset | M: Music On/Off | C: Clear | N: Notes On/Off",
-            "1-4: Scale (Major/Minor/Pentatonic/Chromatic)",
+            "1-4: Scale (Major/Minor/Pentatonic/Chromatic) | WHITE CELLS = Playing Notes",
             "Q/W/E/T: Mode (Position/Density/Pattern/Harmonic)",
-            "F1-F8: Rule Sets | TAB: Cycle Rules | P: Cycle Patterns",
+            "F1-F8: Rule Sets | TAB: Cycle Rules | X: Cycle Patterns",
             "G: Grid | +/-: Speed | Up/Down: Volume",
             "Left Click: Toggle Cell | Right Click: Place Pattern"
         ]

@@ -27,7 +27,7 @@ def main():
     
     try:
         # Create and run the visualizer
-        visualizer = GameVisualizer(width=60, height=40, cell_size=10)
+        visualizer = GameVisualizer(width=60, height=40, cell_size=18)
         print("Application loaded successfully!")
         print("\nControls:")
         print("- SPACE: Start/pause simulation")

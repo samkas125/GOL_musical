@@ -12,7 +12,7 @@ from music_generator import MusicGenerator
 class GameVisualizer:
     """Handles the visual display and user interaction for the Game of Life with note display."""
 
-    def __init__(self, width: int = 50, height: int = 50, cell_size: int = 12):
+    def __init__(self, width: int = 50, height: int = 50, cell_size: int = 20):  # INCREASED cell_size from 12 to 20
         """
         Initialize the visualizer.
 
@@ -27,14 +27,14 @@ class GameVisualizer:
 
         # Calculate screen dimensions
         self.screen_width = width * cell_size
-        self.screen_height = height * cell_size + 100  # Extra space for UI
+        self.screen_height = height * cell_size + 120  # Extra space for UI (increased slightly)
 
         # Colors
         self.colors = {
             'background': (20, 20, 20),
             'grid_lines': (40, 40, 40),
             'dead_cell': (30, 30, 30),
-            'living_cell': (255, 255, 100),  # Changed to yellow for musical cells
+            'living_cell': (255, 255, 100),  # Yellow for musical cells
             'new_cell': (255, 255, 150),
             'dying_cell': (255, 100, 100),
             'text': (255, 255, 255),
@@ -48,10 +48,14 @@ class GameVisualizer:
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
         pygame.display.set_caption("Musical Conway's Game of Life")
         self.clock = pygame.time.Clock()
-        self.font = pygame.font.Font(None, 24)
-        self.small_font = pygame.font.Font(None, 18)
-        # Font for note names - needs to be small enough to fit in cells
-        note_font_size = max(8, min(self.cell_size - 2, 12))
+
+        # Font sizing based on cell size - scale appropriately
+        ui_font_size = max(20, min(32, self.cell_size + 4))  # UI font scales with cell size
+        small_ui_font_size = max(16, min(24, self.cell_size))  # Smaller UI font
+        note_font_size = max(10, min(self.cell_size - 4, 16))  # Note font fits in cells
+
+        self.font = pygame.font.Font(None, ui_font_size)
+        self.small_font = pygame.font.Font(None, small_ui_font_size)
         self.note_font = pygame.font.Font(None, note_font_size)
 
         # Game state
@@ -60,9 +64,9 @@ class GameVisualizer:
         self.running = True
         self.paused = True
         self.show_grid = True
-        self.show_notes = True  # New option to toggle note display
+        self.show_notes = True  # Option to toggle note display
         self.music_enabled = True
-        self.generation_speed = 5  # Frames per generation
+        self.generation_speed = 20  # Frames per generation
 
         # UI state
         self.selected_pattern = None
@@ -107,7 +111,7 @@ class GameVisualizer:
         elif event.key == pygame.K_g:
             self.show_grid = not self.show_grid
 
-        elif event.key == pygame.K_n:  # New key to toggle note display
+        elif event.key == pygame.K_n:  # Toggle note display
             self.show_notes = not self.show_notes
 
         elif event.key == pygame.K_1:
@@ -250,7 +254,7 @@ class GameVisualizer:
 
     def _draw_ui(self) -> None:
         """Draw the user interface."""
-        ui_y = self.height * self.cell_size + 5
+        ui_y = self.height * self.cell_size + 10  # Increased margin
 
         # Background for UI
         ui_rect = pygame.Rect(0, ui_y, self.screen_width, self.screen_height - ui_y)
@@ -267,12 +271,14 @@ class GameVisualizer:
             f"Volume: {self.music_gen.max_volume:.1f}"
         ]
 
-        x_offset = 10
+        x_offset = 15  # Increased margin
+        line_height = max(18, self.cell_size)  # Scale line height with cell size
         for i, text in enumerate(status_text):
             surface = self.small_font.render(text, True, self.colors['text'])
-            self.screen.blit(surface, (x_offset, ui_y + 5 + i * 20))
+            self.screen.blit(surface, (x_offset, ui_y + 10 + i * line_height))
 
-        # Controls
+        # Controls - adjusted spacing for larger fonts
+        controls_y = ui_y + 10 + len(status_text) * line_height + 15
         controls_text = [
             "SPACE: Pause/Play | R: Reset | M: Music On/Off | C: Clear | N: Notes On/Off",
             "1-4: Scale (Major/Minor/Pentatonic/Chromatic)",
@@ -281,11 +287,12 @@ class GameVisualizer:
             "Left Click: Toggle Cell | Right Click: Place Pattern"
         ]
 
+        control_line_height = max(16, self.cell_size - 2)  # Slightly smaller for controls
         for i, text in enumerate(controls_text):
             surface = self.small_font.render(text, True, self.colors['text'])
-            self.screen.blit(surface, (10, ui_y + 120 + i * 15))
+            self.screen.blit(surface, (15, controls_y + i * control_line_height))
 
-        # Current settings
+        # Current settings - positioned on the right
         settings_text = [
             f"Scale: {self.music_gen.current_scale}",
             f"Mode: {self.music_gen.current_mode}",
@@ -294,10 +301,10 @@ class GameVisualizer:
             f"Status: {'PAUSED' if self.paused else 'RUNNING'}"
         ]
 
-        x_offset = self.screen_width - 200
+        settings_x = max(self.screen_width - 250, self.screen_width * 0.7)  # Adaptive positioning
         for i, text in enumerate(settings_text):
             surface = self.small_font.render(text, True, self.colors['text'])
-            self.screen.blit(surface, (x_offset, ui_y + 5 + i * 20))
+            self.screen.blit(surface, (int(settings_x), ui_y + 10 + i * line_height))
 
     def run(self) -> None:
         """Main game loop."""
@@ -318,7 +325,8 @@ class GameVisualizer:
 
 def main():
     """Main entry point."""
-    visualizer = GameVisualizer(width=60, height=40, cell_size=10)
+    # UPDATED: Larger cell size for better note visibility
+    visualizer = GameVisualizer(width=60, height=40, cell_size=20)  # Increased from 10 to 20
     visualizer.run()
 
 

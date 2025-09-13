@@ -40,16 +40,17 @@ class GameOfLife:
             self.grid[y, x] = not self.grid[y, x]
     
     def count_neighbors(self, x: int, y: int) -> int:
-        """Count living neighbors around cell at (x, y)."""
+        """Count living neighbors around cell at (x, y) with wrapping edges."""
         count = 0
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
                 if dx == 0 and dy == 0:
                     continue
-                nx, ny = x + dx, y + dy
-                if 0 <= nx < self.width and 0 <= ny < self.height:
-                    if self.grid[ny, nx]:
-                        count += 1
+                # Use modulo to wrap around edges
+                nx = (x + dx) % self.width
+                ny = (y + dy) % self.height
+                if self.grid[ny, nx]:
+                    count += 1
         return count
     
     def next_generation(self) -> None:

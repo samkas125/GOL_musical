@@ -987,6 +987,41 @@ from game_of_life import GameOfLife
 class MusicGenerator:
     """Generates music based on Game of Life patterns."""
 
+    #NOTE_FREQS = {
+#     "C": 261.63, "C#": 277.18, "Db": 277.18,
+#     "D": 293.66, "D#": 311.13, "Eb": 311.13,
+#     "E": 329.63, "F": 349.23, "F#": 369.99, "Gb": 369.99,
+#     "G": 392.00, "G#": 415.30, "Ab": 415.30,
+#     "A": 440.00, "A#": 466.16, "Bb": 466.16,
+#     "B": 493.88
+# }
+
+    #Scale Names
+    # SCALE_NAMES = [
+    #     "major",
+    #     "natural_minor",
+    #     "harmonic_minor",
+    #     "melodic_minor",
+    #     "major_pentatonic",
+    #     "minor_pentatonic",
+    #     "blues",
+    #     "chromatic",
+    #     "ionian",
+    #     "dorian",
+    #     "phrygian",
+    #     "lydian",
+    #     "mixolydian",
+    #     "aeolian",
+    #     "locrian",
+    #     "whole_tone",
+    #     "half_whole_diminished",
+    #     "whole_half_diminished",
+    #     "bebop_dominant",
+    #     "bebop_major",
+    #     "harmonic_major",
+    #     "hungarian_minor"
+    # ]
+
     # Musical scales and frequencies
     MAJOR_SCALE = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88]  # C major
     MINOR_SCALE = [261.63, 277.18, 311.13, 349.23, 392.00, 415.30, 466.16]  # C minor
@@ -994,11 +1029,85 @@ class MusicGenerator:
     CHROMATIC = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 
                  392.00, 415.30, 440.00, 466.16, 493.88]  # C chromatic
 
+    # My additions
+    # Base note: C4 = 261.63 Hz
+    # Using equal temperament (A4 = 440 Hz tuning)
+
+    NATURAL_MINOR = [261.63, 293.66, 311.13, 349.23, 392.00, 415.30, 466.16]  # C Aeolian
+    HARMONIC_MINOR = [261.63, 293.66, 311.13, 349.23, 392.00, 415.30, 493.88]
+    MELODIC_MINOR = [261.63, 293.66, 311.13, 349.23, 392.00, 440.00, 493.88]
+
+    # Pentatonics & Blues
+    MAJOR_PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00]
+    MINOR_PENTATONIC = [261.63, 311.13, 349.23, 392.00, 466.16]
+    BLUES_SCALE = [261.63, 311.13, 349.23, 369.99, 392.00, 466.16]
+
+    # Modes (relative to C major scale)
+    IONIAN = MAJOR_SCALE
+    DORIAN = [261.63, 293.66, 311.13, 349.23, 392.00, 440.00, 466.16]
+    PHRYGIAN = [261.63, 277.18, 311.13, 349.23, 392.00, 415.30, 466.16]
+    LYDIAN = [261.63, 293.66, 329.63, 370.00, 392.00, 440.00, 493.88]
+    MIXOLYDIAN = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 466.16]
+    AEOLIAN = NATURAL_MINOR
+    LOCRIAN = [261.63, 277.18, 311.13, 349.23, 369.99, 415.30, 466.16]
+
+    # Chromatic (all 12 semitones)
+    CHROMATIC = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 
+                370.00, 392.00, 415.30, 440.00, 466.16, 493.88]
+
+    # Exotic & Jazz Scales
+    WHOLE_TONE = [261.63, 293.66, 329.63, 370.00, 415.30, 466.16]
+    HALF_WHOLE_DIM = [261.63, 277.18, 311.13, 329.63, 349.23, 370.00, 392.00, 415.30]
+    WHOLE_HALF_DIM = [261.63, 293.66, 311.13, 349.23, 370.00, 392.00, 415.30, 466.16]
+
+    BEBOP_DOMINANT = [261.63, 293.66, 329.63, 349.23, 392.00, 415.30, 440.00, 466.16]
+    BEBOP_MAJOR = [261.63, 293.66, 329.63, 349.23, 369.99, 392.00, 440.00, 493.88]
+
+    HARMONIC_MAJOR = [261.63, 293.66, 329.63, 349.23, 392.00, 415.30, 493.88]
+    HUNGARIAN_MINOR = [261.63, 293.66, 311.13, 370.00, 392.00, 415.30, 493.88]
+
+
+
     # Note names corresponding to each scale
     MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
     MINOR_NOTES = ['C', 'D♭', 'E♭', 'F', 'G', 'A♭', 'B♭']
     PENTATONIC_NOTES = ['C', 'D', 'E', 'G', 'A']
     CHROMATIC_NOTES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'F#', 'G', 'A♭', 'A', 'B♭', 'B']
+
+        # Diatonic Scales
+    NATURAL_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']  # Aeolian
+    HARMONIC_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B']
+    MELODIC_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A', 'B']
+
+    # Pentatonic & Blues
+    MAJOR_PENTATONIC_NOTES = ['C', 'D', 'E', 'G', 'A']
+    MINOR_PENTATONIC_NOTES = ['C', 'E♭', 'F', 'G', 'B♭']
+    BLUES_NOTES = ['C', 'E♭', 'F', 'F#', 'G', 'B♭']
+
+    # Chromatic
+    CHROMATIC_NOTES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 
+                    'F#', 'G', 'A♭', 'A', 'B♭', 'B']
+
+    # Modes
+    IONIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']  # same as major
+    DORIAN_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A', 'B♭']
+    PHRYGIAN_NOTES = ['C', 'D♭', 'E♭', 'F', 'G', 'A♭', 'B♭']
+    LYDIAN_NOTES = ['C', 'D', 'E', 'F#', 'G', 'A', 'B']
+    MIXOLYDIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B♭']
+    AEOLIAN_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']  # same as natural minor
+    LOCRIAN_NOTES = ['C', 'D♭', 'E♭', 'F', 'G♭', 'A♭', 'B♭']
+
+    # Other Scales
+    WHOLE_TONE_NOTES = ['C', 'D', 'E', 'F#', 'G#', 'A#']
+    HALF_WHOLE_DIMINISHED_NOTES = ['C', 'D♭', 'E♭', 'E', 'F#', 'G', 'A', 'B♭']
+    WHOLE_HALF_DIMINISHED_NOTES = ['C', 'D', 'E♭', 'F', 'F#', 'G#', 'A', 'B']
+
+    BEBOP_DOMINANT_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B♭', 'B']
+    BEBOP_MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'G#', 'A', 'B']
+
+    HARMONIC_MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'A♭', 'B']
+    HUNGARIAN_MINOR_NOTES = ['C', 'D', 'E♭', 'F#', 'G', 'A♭', 'B']
+
 
     def __init__(self, game: GameOfLife):
         """
@@ -1012,14 +1121,56 @@ class MusicGenerator:
             'major': self.MAJOR_SCALE,
             'minor': self.MINOR_SCALE,
             'pentatonic': self.PENTATONIC,
-            'chromatic': self.CHROMATIC
+            'chromatic': self.CHROMATIC,
+            'natural_minor': self.NATURAL_MINOR,
+            'harmonic_minor': self.HARMONIC_MINOR,
+            'melodic_minor': self.MELODIC_MINOR,
+            'major_pentatonic': self.MAJOR_PENTATONIC,
+            'minor_pentatonic': self.MINOR_PENTATONIC,
+            'blues': self.BLUES_SCALE,
+            'ionian': self.IONIAN,
+            'dorian': self.DORIAN,
+            'phrygian': self.PHRYGIAN,
+            'lydian': self.LYDIAN,
+            'mixolydian': self.MIXOLYDIAN,
+            'aeolian': self.AEOLIAN,
+            'locrian': self.LOCRIAN,
+            'whole_tone': self.WHOLE_TONE,
+            'half_whole_diminished': self.HALF_WHOLE_DIM,
+            'whole_half_diminished': self.WHOLE_HALF_DIM,
+            'bebop_dominant': self.BEBOP_DOMINANT,
+            'bebop_major': self.BEBOP_MAJOR,
+            'harmonic_major': self.HARMONIC_MAJOR,
+            'hungarian_minor': self.HUNGARIAN_MINOR
         }
+
         self.note_names = {
             'major': self.MAJOR_NOTES,
             'minor': self.MINOR_NOTES,
             'pentatonic': self.PENTATONIC_NOTES,
-            'chromatic': self.CHROMATIC_NOTES
+            'chromatic': self.CHROMATIC_NOTES,
+            'natural_minor': self.NATURAL_MINOR_NOTES,
+            'harmonic_minor': self.HARMONIC_MINOR_NOTES,
+            'melodic_minor': self.MELODIC_MINOR_NOTES,
+            'major_pentatonic': self.MAJOR_PENTATONIC_NOTES,
+            'minor_pentatonic': self.MINOR_PENTATONIC_NOTES,
+            'blues': self.BLUES_NOTES,
+            'ionian': self.IONIAN_NOTES,
+            'dorian': self.DORIAN_NOTES,
+            'phrygian': self.PHRYGIAN_NOTES,
+            'lydian': self.LYDIAN_NOTES,
+            'mixolydian': self.MIXOLYDIAN_NOTES,
+            'aeolian': self.AEOLIAN_NOTES,
+            'locrian': self.LOCRIAN_NOTES,
+            'whole_tone': self.WHOLE_TONE_NOTES,
+            'half_whole_diminished': self.HALF_WHOLE_DIMINISHED_NOTES,
+            'whole_half_diminished': self.WHOLE_HALF_DIMINISHED_NOTES,
+            'bebop_dominant': self.BEBOP_DOMINANT_NOTES,
+            'bebop_major': self.BEBOP_MAJOR_NOTES,
+            'harmonic_major': self.HARMONIC_MAJOR_NOTES,
+            'hungarian_minor': self.HUNGARIAN_MINOR_NOTES
         }
+
         self.current_scale = 'major'
         self.octave_range = 3  # Number of octaves to use
         self.base_octave = 3
@@ -1128,6 +1279,43 @@ class MusicGenerator:
 
     def _generate_position_based_music(self) -> None:
         """Generate music based on cell positions."""
+        # living_cells = self.game.get_living_cells()
+        # if not living_cells:
+        #     return
+
+        # for x, y in living_cells[:12]:
+        #     # Normalize coordinates
+        #     norm_x = x / self.game.width
+        #     norm_y = y / self.game.height
+
+        #     # Quadrant-based scale mapping
+        #     if norm_y < 0.33:
+        #         if norm_x < 0.5:
+        #             chosen_scale = 'major_pentatonic'
+        #         else:
+        #             chosen_scale = 'lydian'
+        #     elif norm_y < 0.66:
+        #         if norm_x < 0.5:
+        #             chosen_scale = 'minor'
+        #         else:
+        #             chosen_scale = 'dorian'
+        #     else:
+        #         if norm_x < 0.5:
+        #             chosen_scale = 'blues'
+        #         else:
+        #             chosen_scale = 'chromatic'
+
+        #     self.current_scale = chosen_scale
+
+        #     # Note frequency from scale
+        #     frequency = self._get_note_frequency(x, y, chosen_scale)
+        #     volume = self.max_volume * 0.8
+
+        #     sound = self._generate_tone(frequency, self.note_duration, volume)
+        #     channel = sound.play()
+
+        #     if channel:
+        #         self.active_sounds.append(channel)
         living_cells = self.game.get_living_cells()
 
         for x, y in living_cells:
@@ -1145,17 +1333,51 @@ class MusicGenerator:
         """Generate music based on cell density patterns."""
         density = self.game.get_cell_density()
 
-        if density > 0.1:  # Only generate sound if there are enough cells
-            # Use density to determine frequency range
-            base_freq = 200 + density * 800
+        # --- OLD VERSION ---
+        # if density > 0.1:  # Only generate sound if there are enough cells
+        #     # Use density to determine frequency range
+        #     base_freq = 200 + density * 800
+        #
+        #     # Generate chord based on density
+        #     chord_notes = 3 + int(density * 4)
+        #     for i in range(chord_notes):
+        #         frequency = base_freq * (1 + i * 0.5)
+        #         volume = self.max_volume * density * 0.8
+        #
+        #         sound = self._generate_tone(frequency, self.note_duration * 2, volume)
+        #         channel = sound.play()
+        #
+        #         if channel:
+        #             self.active_sounds.append(channel)
 
-            # Generate chord based on density
-            chord_notes = 3 + int(density * 4)
-            for i in range(chord_notes):
-                frequency = base_freq * (1 + i * 0.5)
-                volume = self.max_volume * density * 0.8
+        # --- NEW VERSION (density controls scale choice) ---
+        if density > 0:
+            # Map density ranges to scale families
+            if density < 0.001:
+                chosen_scale = 'major_pentatonic'
+            elif density < 0.005:
+                chosen_scale = 'major'
+            elif density < 0.01:
+                chosen_scale = 'minor'
+            elif density < 0.05:
+                chosen_scale = 'dorian'
+            elif density < 0.1:
+                chosen_scale = 'mixolydian'
+            elif density < 0.15:
+                chosen_scale = 'blues'
+            else:
+                chosen_scale = 'chromatic'
 
-                sound = self._generate_tone(frequency, self.note_duration * 2, volume)
+            # Update current scale automatically
+            self.current_scale = chosen_scale
+
+            # Generate notes based on this scale
+            living_cells = self.game.get_living_cells()
+            for x, y in living_cells[:12]:  # Limit active notes
+                frequency = self._get_note_frequency(x, y, chosen_scale)
+                volume = self.max_volume * (0.5 + density * 0.5)
+
+                sound = self._generate_tone(frequency, self.note_duration, volume)
                 channel = sound.play()
 
                 if channel:
@@ -1428,6 +1650,40 @@ class GameVisualizer:
             'ui_border': (80, 80, 80)
         }
 
+        #  Color palettes by scale (warm vs cool)
+        self.scale_colors = {
+            # Happy/Bright scales → warmer colors
+            'major': (255, 215, 0),            # gold
+            'ionian': (255, 200, 50),
+            'lydian': (255, 165, 0),           # orange
+            'mixolydian': (255, 140, 0),
+
+            # Sad/Dark scales → cooler colors
+            'minor': (100, 149, 237),          # cornflower blue
+            'natural_minor': (70, 130, 180),   # steel blue
+            'harmonic_minor': (65, 105, 225),  # royal blue
+            'melodic_minor': (72, 61, 139),    # dark slate blue
+            'aeolian': (95, 158, 160),         # cadet blue
+            'dorian': (123, 104, 238),         # medium slate blue
+            'phrygian': (106, 90, 205),        # slate blue
+            'locrian': (25, 25, 112),          # midnight blue
+
+            # Exotic/neutral → mix of vibrant colors
+            'pentatonic': (60, 179, 113),      # medium sea green
+            'major_pentatonic': (50, 205, 50), # lime green
+            'minor_pentatonic': (46, 139, 87), # sea green
+            'blues': (30, 144, 255),           # dodger blue
+
+            'chromatic': (220, 20, 60),        # crimson
+            'whole_tone': (255, 99, 71),       # tomato
+            'half_whole_diminished': (186, 85, 211),  # orchid
+            'whole_half_diminished': (138, 43, 226),  # blue violet
+            'bebop_dominant': (199, 21, 133),  # medium violet red
+            'bebop_major': (255, 105, 180),    # hot pink
+            'harmonic_major': (255, 69, 0),    # red-orange
+            'hungarian_minor': (148, 0, 211)   # dark violet
+        }
+
         # Initialize pygame
         pygame.init()
         self.screen = pygame.display.set_mode((self.screen_width, self.screen_height))
@@ -1511,6 +1767,51 @@ class GameVisualizer:
             self.music_gen.set_scale('pentatonic')
         elif event.key == pygame.K_4:
             self.music_gen.set_scale('chromatic')
+
+        # Additional scales
+        elif event.key == pygame.K_5:
+            self.music_gen.set_scale('natural_minor')
+        elif event.key == pygame.K_6:
+            self.music_gen.set_scale('harmonic_minor')
+        elif event.key == pygame.K_7:
+            self.music_gen.set_scale('melodic_minor')
+        elif event.key == pygame.K_8:
+            self.music_gen.set_scale('major_pentatonic')
+        elif event.key == pygame.K_9:
+            self.music_gen.set_scale('minor_pentatonic')
+        elif event.key == pygame.K_0:
+            self.music_gen.set_scale('blues')
+
+        # Letter keys (skipping reserved ones)
+        elif event.key == pygame.K_a:
+            self.music_gen.set_scale('ionian')
+        elif event.key == pygame.K_b:
+            self.music_gen.set_scale('dorian')
+        elif event.key == pygame.K_d:
+            self.music_gen.set_scale('phrygian')
+        elif event.key == pygame.K_f:
+            self.music_gen.set_scale('lydian')
+        elif event.key == pygame.K_h:
+            self.music_gen.set_scale('mixolydian')
+        elif event.key == pygame.K_i:
+            self.music_gen.set_scale('aeolian')
+        elif event.key == pygame.K_j:
+            self.music_gen.set_scale('locrian')
+        elif event.key == pygame.K_k:
+            self.music_gen.set_scale('whole_tone')
+        elif event.key == pygame.K_l:
+            self.music_gen.set_scale('half_whole_diminished')
+        elif event.key == pygame.K_o:
+            self.music_gen.set_scale('whole_half_diminished')
+        elif event.key == pygame.K_p:
+            self.music_gen.set_scale('bebop_dominant')
+        elif event.key == pygame.K_s:
+            self.music_gen.set_scale('bebop_major')
+        elif event.key == pygame.K_u:
+            self.music_gen.set_scale('harmonic_major')
+        elif event.key == pygame.K_v:
+            self.music_gen.set_scale('hungarian_minor')
+
 
         elif event.key == pygame.K_q:
             self.music_gen.set_mode('position')
@@ -1629,7 +1930,8 @@ class GameVisualizer:
 
                 if self.game.get_cell(x, y):
                     # Living cell - always yellow for musical cells
-                    color = self.colors['living_cell']
+                    current_scale = self.music_gen.current_scale
+                    color = self.scale_colors.get(current_scale, self.colors['living_cell'])
 
                     pygame.draw.rect(self.screen, color, rect)
 

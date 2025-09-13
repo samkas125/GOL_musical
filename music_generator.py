@@ -1,6 +1,8 @@
+
 """
 Musical generation system for Conway's Game of Life.
 Maps cellular patterns to musical elements with note name display support.
+Includes automatic note thinning - only plays lowest newborn note per row.
 """
 
 import pygame
@@ -11,42 +13,7 @@ from game_of_life import GameOfLife
 
 
 class MusicGenerator:
-    """Generates music based on Game of Life patterns."""
-
-    #NOTE_FREQS = {
-#     "C": 261.63, "C#": 277.18, "Db": 277.18,
-#     "D": 293.66, "D#": 311.13, "Eb": 311.13,
-#     "E": 329.63, "F": 349.23, "F#": 369.99, "Gb": 369.99,
-#     "G": 392.00, "G#": 415.30, "Ab": 415.30,
-#     "A": 440.00, "A#": 466.16, "Bb": 466.16,
-#     "B": 493.88
-# }
-
-    #Scale Names
-    # SCALE_NAMES = [
-    #     "major",
-    #     "natural_minor",
-    #     "harmonic_minor",
-    #     "melodic_minor",
-    #     "major_pentatonic",
-    #     "minor_pentatonic",
-    #     "blues",
-    #     "chromatic",
-    #     "ionian",
-    #     "dorian",
-    #     "phrygian",
-    #     "lydian",
-    #     "mixolydian",
-    #     "aeolian",
-    #     "locrian",
-    #     "whole_tone",
-    #     "half_whole_diminished",
-    #     "whole_half_diminished",
-    #     "bebop_dominant",
-    #     "bebop_major",
-    #     "harmonic_major",
-    #     "hungarian_minor"
-    # ]
+    """Generates music based on Game of Life patterns with intelligent note thinning."""
 
     # Musical scales and frequencies
     MAJOR_SCALE = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88]  # C major
@@ -55,20 +22,15 @@ class MusicGenerator:
     CHROMATIC = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 
                  392.00, 415.30, 440.00, 466.16, 493.88]  # C chromatic
 
-    # My additions
-    # Base note: C4 = 261.63 Hz
-    # Using equal temperament (A4 = 440 Hz tuning)
-
-    NATURAL_MINOR = [261.63, 293.66, 311.13, 349.23, 392.00, 415.30, 466.16]  # C Aeolian
+    # Additional scales from your project
+    NATURAL_MINOR = [261.63, 293.66, 311.13, 349.23, 392.00, 415.30, 466.16]
     HARMONIC_MINOR = [261.63, 293.66, 311.13, 349.23, 392.00, 415.30, 493.88]
     MELODIC_MINOR = [261.63, 293.66, 311.13, 349.23, 392.00, 440.00, 493.88]
-
-    # Pentatonics & Blues
     MAJOR_PENTATONIC = [261.63, 293.66, 329.63, 392.00, 440.00]
     MINOR_PENTATONIC = [261.63, 311.13, 349.23, 392.00, 466.16]
     BLUES_SCALE = [261.63, 311.13, 349.23, 369.99, 392.00, 466.16]
 
-    # Modes (relative to C major scale)
+    # Modes
     IONIAN = MAJOR_SCALE
     DORIAN = [261.63, 293.66, 311.13, 349.23, 392.00, 440.00, 466.16]
     PHRYGIAN = [261.63, 277.18, 311.13, 349.23, 392.00, 415.30, 466.16]
@@ -77,22 +39,14 @@ class MusicGenerator:
     AEOLIAN = NATURAL_MINOR
     LOCRIAN = [261.63, 277.18, 311.13, 349.23, 369.99, 415.30, 466.16]
 
-    # Chromatic (all 12 semitones)
-    CHROMATIC = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 
-                370.00, 392.00, 415.30, 440.00, 466.16, 493.88]
-
-    # Exotic & Jazz Scales
+    # Exotic scales
     WHOLE_TONE = [261.63, 293.66, 329.63, 370.00, 415.30, 466.16]
     HALF_WHOLE_DIM = [261.63, 277.18, 311.13, 329.63, 349.23, 370.00, 392.00, 415.30]
     WHOLE_HALF_DIM = [261.63, 293.66, 311.13, 349.23, 370.00, 392.00, 415.30, 466.16]
-
     BEBOP_DOMINANT = [261.63, 293.66, 329.63, 349.23, 392.00, 415.30, 440.00, 466.16]
     BEBOP_MAJOR = [261.63, 293.66, 329.63, 349.23, 369.99, 392.00, 440.00, 493.88]
-
     HARMONIC_MAJOR = [261.63, 293.66, 329.63, 349.23, 392.00, 415.30, 493.88]
     HUNGARIAN_MINOR = [261.63, 293.66, 311.13, 370.00, 392.00, 415.30, 493.88]
-
-
 
     # Note names corresponding to each scale
     MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
@@ -100,40 +54,29 @@ class MusicGenerator:
     PENTATONIC_NOTES = ['C', 'D', 'E', 'G', 'A']
     CHROMATIC_NOTES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'F#', 'G', 'A♭', 'A', 'B♭', 'B']
 
-        # Diatonic Scales
-    NATURAL_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']  # Aeolian
+    # Additional note names
+    NATURAL_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']
     HARMONIC_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B']
     MELODIC_MINOR_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A', 'B']
-
-    # Pentatonic & Blues
     MAJOR_PENTATONIC_NOTES = ['C', 'D', 'E', 'G', 'A']
     MINOR_PENTATONIC_NOTES = ['C', 'E♭', 'F', 'G', 'B♭']
     BLUES_NOTES = ['C', 'E♭', 'F', 'F#', 'G', 'B♭']
 
-    # Chromatic
-    CHROMATIC_NOTES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 
-                    'F#', 'G', 'A♭', 'A', 'B♭', 'B']
-
-    # Modes
-    IONIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']  # same as major
+    IONIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
     DORIAN_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A', 'B♭']
     PHRYGIAN_NOTES = ['C', 'D♭', 'E♭', 'F', 'G', 'A♭', 'B♭']
     LYDIAN_NOTES = ['C', 'D', 'E', 'F#', 'G', 'A', 'B']
     MIXOLYDIAN_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B♭']
-    AEOLIAN_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']  # same as natural minor
+    AEOLIAN_NOTES = ['C', 'D', 'E♭', 'F', 'G', 'A♭', 'B♭']
     LOCRIAN_NOTES = ['C', 'D♭', 'E♭', 'F', 'G♭', 'A♭', 'B♭']
 
-    # Other Scales
     WHOLE_TONE_NOTES = ['C', 'D', 'E', 'F#', 'G#', 'A#']
     HALF_WHOLE_DIMINISHED_NOTES = ['C', 'D♭', 'E♭', 'E', 'F#', 'G', 'A', 'B♭']
     WHOLE_HALF_DIMINISHED_NOTES = ['C', 'D', 'E♭', 'F', 'F#', 'G#', 'A', 'B']
-
     BEBOP_DOMINANT_NOTES = ['C', 'D', 'E', 'F', 'G', 'A', 'B♭', 'B']
     BEBOP_MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'G#', 'A', 'B']
-
     HARMONIC_MAJOR_NOTES = ['C', 'D', 'E', 'F', 'G', 'A♭', 'B']
     HUNGARIAN_MINOR_NOTES = ['C', 'D', 'E♭', 'F#', 'G', 'A♭', 'B']
-
 
     def __init__(self, game: GameOfLife):
         """
@@ -143,6 +86,8 @@ class MusicGenerator:
             game: GameOfLife instance to generate music from
         """
         self.game = game
+
+        # Build scales and note names dictionaries
         self.scales = {
             'major': self.MAJOR_SCALE,
             'minor': self.MINOR_SCALE,
@@ -198,14 +143,14 @@ class MusicGenerator:
         }
 
         self.current_scale = 'major'
-        self.octave_range = 3  # Number of octaves to use
+        self.octave_range = 3
         self.base_octave = 3
 
         # Initialize pygame mixer
         pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
 
         # Musical parameters
-        self.note_duration = .3  # Duration of each note in seconds
+        self.note_duration = 0.3
         self.max_volume = 0.25
         self.volume_decay = 0.95
 
@@ -213,7 +158,10 @@ class MusicGenerator:
         self.active_sounds = []
 
         # Cell note mapping for display
-        self.cell_notes = {}  # Maps (x, y) to note name
+        self.cell_notes = {}
+
+        # Track cell ages for newborn detection
+        self.previous_living_cells = set()
 
         # Musical modes
         self.modes = {
@@ -245,54 +193,64 @@ class MusicGenerator:
         return pygame.mixer.Sound(stereo_wave)
 
     def _get_note_frequency(self, x: int, y: int, scale: str = None) -> float:
-        """
-        Map cell position to musical frequency.
-
-        Args:
-            x: X coordinate of the cell
-            y: Y coordinate of the cell
-            scale: Scale to use (defaults to current scale)
-
-        Returns:
-            Frequency in Hz
-        """
+        """Map cell position to musical frequency."""
         if scale is None:
             scale = self.current_scale
 
-        # Map position to scale index
         position = (x + y) % len(self.scales[scale])
         base_frequency = self.scales[scale][position]
 
-        # Add octave variation based on position
         octave_offset = ((x * 7 + y * 11) % (self.octave_range * 2)) - self.octave_range
         frequency = base_frequency * (2 ** octave_offset)
 
         return frequency
 
     def _get_note_name(self, x: int, y: int, scale: str = None) -> str:
-        """
-        Get the note name for a cell at position (x, y).
-
-        Args:
-            x: X coordinate of the cell
-            y: Y coordinate of the cell
-            scale: Scale to use (defaults to current scale)
-
-        Returns:
-            Note name as string (e.g., 'C', 'D♭', 'F#')
-        """
+        """Get the note name for a cell at position (x, y)."""
         if scale is None:
             scale = self.current_scale
 
-        # Map position to scale index
         position = (x + y) % len(self.scales[scale])
         base_note = self.note_names[scale][position]
 
-        # Add octave number based on position
         octave_offset = ((x * 7 + y * 11) % (self.octave_range * 2)) - self.octave_range
         octave_number = self.base_octave + octave_offset
 
         return f"{base_note}{octave_number}"
+
+    def _find_newborn_cells(self) -> List[Tuple[int, int]]:
+        """Find cells that were just born this generation."""
+        current_living_cells = set(self.game.get_living_cells())
+        newborn_cells = current_living_cells - self.previous_living_cells
+        self.previous_living_cells = current_living_cells
+        return list(newborn_cells)
+
+    def _thin_notes_by_row(self, cells: List[Tuple[int, int]]) -> List[Tuple[int, int]]:
+        """
+        Return only the lowest frequency (highest Y coordinate) newborn cell per row.
+        This reduces audio clutter while maintaining musical interest.
+        """
+        if not cells:
+            return []
+
+        # Group cells by row (Y coordinate)
+        rows = {}
+        for x, y in cells:
+            if y not in rows:
+                rows[y] = []
+            rows[y].append((x, y))
+
+        # For each row, find the cell that would produce the lowest frequency
+        # Lower frequency = higher Y + higher X (based on the frequency calculation)
+        thinned_cells = []
+        for y, row_cells in rows.items():
+            if row_cells:
+                # Sort by X coordinate (descending) to get lowest frequency first
+                # The frequency calculation uses (x + y), so higher x = lower relative freq
+                lowest_freq_cell = max(row_cells, key=lambda cell: cell[0])
+                thinned_cells.append(lowest_freq_cell)
+
+        return thinned_cells
 
     def _update_cell_notes(self) -> None:
         """Update the mapping of cells to their note names."""
@@ -304,51 +262,18 @@ class MusicGenerator:
             self.cell_notes[(x, y)] = note_name
 
     def _generate_position_based_music(self) -> None:
-        """Generate music based on cell positions."""
-        # living_cells = self.game.get_living_cells()
-        # if not living_cells:
-        #     return
+        """Generate music based on cell positions with automatic note thinning."""
+        # Find newborn cells
+        newborn_cells = self._find_newborn_cells()
 
-        # for x, y in living_cells[:12]:
-        #     # Normalize coordinates
-        #     norm_x = x / self.game.width
-        #     norm_y = y / self.game.height
+        # Apply automatic thinning - only lowest note per row for newborns
+        thinned_cells = self._thin_notes_by_row(newborn_cells)
 
-        #     # Quadrant-based scale mapping
-        #     if norm_y < 0.33:
-        #         if norm_x < 0.5:
-        #             chosen_scale = 'major_pentatonic'
-        #         else:
-        #             chosen_scale = 'lydian'
-        #     elif norm_y < 0.66:
-        #         if norm_x < 0.5:
-        #             chosen_scale = 'minor'
-        #         else:
-        #             chosen_scale = 'dorian'
-        #     else:
-        #         if norm_x < 0.5:
-        #             chosen_scale = 'blues'
-        #         else:
-        #             chosen_scale = 'chromatic'
-
-        #     self.current_scale = chosen_scale
-
-        #     # Note frequency from scale
-        #     frequency = self._get_note_frequency(x, y, chosen_scale)
-        #     volume = self.max_volume * 0.8
-
-        #     sound = self._generate_tone(frequency, self.note_duration, volume)
-        #     channel = sound.play()
-
-        #     if channel:
-        #         self.active_sounds.append(channel)
-        living_cells = self.game.get_living_cells()
-
-        for x, y in living_cells:
+        # Play thinned newborn notes
+        for x, y in thinned_cells:
             frequency = self._get_note_frequency(x, y)
             volume = self.max_volume
 
-            # Create and play note
             sound = self._generate_tone(frequency, self.note_duration, volume)
             channel = sound.play()
 
@@ -356,29 +281,11 @@ class MusicGenerator:
                 self.active_sounds.append(channel)
 
     def _generate_density_based_music(self) -> None:
-        """Generate music based on cell density patterns."""
+        """Generate music based on cell density patterns (keeps density-based scale changes)."""
         density = self.game.get_cell_density()
 
-        # --- OLD VERSION ---
-        # if density > 0.1:  # Only generate sound if there are enough cells
-        #     # Use density to determine frequency range
-        #     base_freq = 200 + density * 800
-        #
-        #     # Generate chord based on density
-        #     chord_notes = 3 + int(density * 4)
-        #     for i in range(chord_notes):
-        #         frequency = base_freq * (1 + i * 0.5)
-        #         volume = self.max_volume * density * 0.8
-        #
-        #         sound = self._generate_tone(frequency, self.note_duration * 2, volume)
-        #         channel = sound.play()
-        #
-        #         if channel:
-        #             self.active_sounds.append(channel)
-
-        # --- NEW VERSION (density controls scale choice) ---
         if density > 0:
-            # Map density ranges to scale families
+            # Map density ranges to scale families (PRESERVED FROM ORIGINAL)
             if density < 0.001:
                 chosen_scale = 'major_pentatonic'
             elif density < 0.005:
@@ -397,9 +304,11 @@ class MusicGenerator:
             # Update current scale automatically
             self.current_scale = chosen_scale
 
-            # Generate notes based on this scale
-            living_cells = self.game.get_living_cells()
-            for x, y in living_cells[:12]:  # Limit active notes
+            # Apply thinning to density-based notes too
+            newborn_cells = self._find_newborn_cells()
+            thinned_cells = self._thin_notes_by_row(newborn_cells)
+
+            for x, y in thinned_cells:
                 frequency = self._get_note_frequency(x, y, chosen_scale)
                 volume = self.max_volume * (0.5 + density * 0.5)
 
@@ -411,12 +320,10 @@ class MusicGenerator:
 
     def _generate_pattern_based_music(self) -> None:
         """Generate music based on specific cell patterns."""
-        # Analyze patterns in the grid
         patterns = self._analyze_patterns()
 
         for pattern_type, positions in patterns.items():
             if positions:
-                # Generate different sounds for different patterns
                 base_freq = {
                     'clusters': 300,
                     'lines': 400,
@@ -424,7 +331,11 @@ class MusicGenerator:
                     'edges': 600
                 }.get(pattern_type, 350)
 
-                for x, y in positions[:5]:  # Limit to 5 positions per pattern
+                # Apply thinning to pattern-based notes as well
+                newborn_positions = [pos for pos in positions if pos in self._find_newborn_cells()]
+                thinned_positions = self._thin_notes_by_row(newborn_positions)
+
+                for x, y in thinned_positions:
                     frequency = base_freq + (x + y) * 10
                     volume = self.max_volume * 0.6
 
@@ -439,14 +350,10 @@ class MusicGenerator:
         population_change = self.game.get_population_change()
 
         if abs(population_change) > 0:
-            # Use population change to determine harmonic progression
-            base_note = 0
             if population_change > 0:
-                # Growing population - ascending progression
-                progression = [0, 2, 4, 6]  # Major progression
+                progression = [0, 2, 4, 6]
             else:
-                # Shrinking population - descending progression
-                progression = [6, 4, 2, 0]  # Minor progression
+                progression = [6, 4, 2, 0]
 
             for note_index in progression:
                 if note_index < len(self.scales[self.current_scale]):
@@ -473,17 +380,14 @@ class MusicGenerator:
         for x, y in living_cells:
             neighbors = self.game.count_neighbors(x, y)
 
-            # Categorize based on neighbor count and position
             if neighbors >= 4:
                 patterns['clusters'].append((x, y))
             elif neighbors <= 1:
                 patterns['isolated'].append((x, y))
             elif neighbors == 2:
-                # Check if it's part of a line
                 if self._is_part_of_line(x, y):
                     patterns['lines'].append((x, y))
 
-            # Check if on edge
             if x == 0 or x == self.game.width - 1 or y == 0 or y == self.game.height - 1:
                 patterns['edges'].append((x, y))
 
@@ -491,7 +395,6 @@ class MusicGenerator:
 
     def _is_part_of_line(self, x: int, y: int) -> bool:
         """Check if a cell is part of a linear pattern."""
-        # Simple line detection - check if neighbors are aligned
         neighbors = []
         for dx in [-1, 0, 1]:
             for dy in [-1, 0, 1]:
@@ -503,11 +406,8 @@ class MusicGenerator:
                     neighbors.append((dx, dy))
 
         if len(neighbors) == 2:
-            # Check if neighbors are aligned
             dx1, dy1 = neighbors[0]
             dx2, dy2 = neighbors[1]
-
-            # Horizontal, vertical, or diagonal alignment
             return (dx1 == dx2 == 0) or (dy1 == dy2 == 0) or (dx1 == dx2 and dy1 == dy2)
 
         return False
@@ -525,16 +425,7 @@ class MusicGenerator:
             self.modes[self.current_mode]()
 
     def get_cell_note(self, x: int, y: int) -> Optional[str]:
-        """
-        Get the note name for a specific cell position.
-
-        Args:
-            x: X coordinate of the cell
-            y: Y coordinate of the cell
-
-        Returns:
-            Note name if cell is alive and has a note, None otherwise
-        """
+        """Get the note name for a specific cell position."""
         return self.cell_notes.get((x, y))
 
     def set_scale(self, scale: str) -> None:

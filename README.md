@@ -128,6 +128,4 @@ This project is open source and available under the MIT License.
 
 ## Acknowledgments
 
-- Inspired by Conway's Game of Life and generative music
-- Built with Python, Pygame, and NumPy
-- Musical scales and theory inspired by traditional music theory
+- Inspired by Conway's Game of Life and generative music.
